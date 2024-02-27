@@ -16,6 +16,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Timber.plant(CustomDebugTree())
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -32,4 +34,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
+
+    private class CustomDebugTree : Timber.DebugTree() { override fun createStackElementTag(element : StackTraceElement) = "[${super.createStackElementTag(element)}:${element.lineNumber} | ${element.methodName}]" }
+
 }
