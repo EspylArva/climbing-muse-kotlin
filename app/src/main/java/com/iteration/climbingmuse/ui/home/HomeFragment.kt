@@ -21,28 +21,33 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.iteration.climbingmuse.MainViewModel
+import com.iteration.climbingmuse.PoseLandmarkerHelper
 import com.iteration.climbingmuse.databinding.FragmentHomeBinding
 import com.iteration.climbingmuse.ui.OverlayView
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: MainViewModel by activityViewModels()
 
     private lateinit var backgroundExecutor: ExecutorService
     private var imageAnalyzer: ImageAnalysis? = null
+    private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
+
     private lateinit var preview: Preview
-    private var _binding: FragmentHomeBinding? = null
+    private var cameraProvider: ProcessCameraProvider? = null
+    private var camera: Camera? = null
 
     private val REQUEST_CODE_CAMERA_PERMISSION = 101
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-    private var camera: Camera? = null
-    private var cameraProvider: ProcessCameraProvider? = null
 
 
     override fun onCreateView(
@@ -68,7 +73,24 @@ class HomeFragment : Fragment() {
         // Init the background executor
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
-        setUpCamera()
+        // Wait for the views to be properly laid out
+        binding.viewFinder.post {
+            // Set up the camera and its use cases
+            setUpCamera()
+        }
+
+        // Create the PoseLandmarkerHelper that will handle the inference
+        backgroundExecutor.execute {
+            poseLandmarkerHelper = PoseLandmarkerHelper(
+                context = requireContext(),
+                runningMode = RunningMode.LIVE_STREAM,
+                minPoseDetectionConfidence = viewModel.currentMinPoseDetectionConfidence,
+                minPoseTrackingConfidence = viewModel.currentMinPoseTrackingConfidence,
+                minPosePresenceConfidence = viewModel.currentMinPosePresenceConfidence,
+                currentDelegate = viewModel.currentDelegate,
+                poseLandmarkerHelperListener = this
+            )
+        }
     }
 
     override fun onDestroyView() {
@@ -94,7 +116,7 @@ class HomeFragment : Fragment() {
         // Preview. Only using the 4:3 ratio because this is the closest to our models
         preview = Preview.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            //.setTargetRotation(binding.viewFinder.display.rotation) // FIXME Seems to crash here
+            .setTargetRotation(binding.viewFinder.display.rotation) // FIXME Seems to crash here
             .build()
 
         val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build() //TODO allow LENS_FACING_FRONT
@@ -105,12 +127,8 @@ class HomeFragment : Fragment() {
 
         // CameraProvider
         val cameraProvider = cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
-        val useCases = arrayOf(preview) // TODO reintroduce imageAnalyzer (add imageAnalyzer to varargs)
-        camera = cameraProvider.bindToLifecycle(this, cameraSelector, *useCases)
 
-
-
-        /*
+        // Use cases
         // ImageAnalysis. Using RGBA 8888 to match how our models work
         imageAnalyzer =
             ImageAnalysis.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3)
@@ -125,11 +143,77 @@ class HomeFragment : Fragment() {
                     }
                 }
 
+        val useCases = arrayOf(preview, imageAnalyzer) // TODO reintroduce imageAnalyzer (add imageAnalyzer to varargs)
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll()
-        */
 
-        // A variable number of use-cases can be passed here -
         // camera provides access to CameraControl & CameraInfo
+        camera = cameraProvider.bindToLifecycle(this, cameraSelector, *useCases)
+
+    }
+
+    private fun detectPose(imageProxy: ImageProxy) {
+        Timber.i("Detecting pose")
+        if(this::poseLandmarkerHelper.isInitialized) {
+            poseLandmarkerHelper.detectLiveStream(
+                imageProxy = imageProxy,
+                isFrontCamera = true // cameraFacing == CameraSelector.LENS_FACING_FRONT
+            )
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // TODO Make sure that all permissions are still present, since the
+        // user could have removed them while the app was in paused state.
+
+        // Start the PoseLandmarkerHelper again when users come back
+        // to the foreground.
+        backgroundExecutor.execute {
+            if(this::poseLandmarkerHelper.isInitialized) {
+                if (poseLandmarkerHelper.isClose()) {
+                    poseLandmarkerHelper.setupPoseLandmarker()
+                }
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(this::poseLandmarkerHelper.isInitialized) {
+            viewModel.setMinPoseDetectionConfidence(poseLandmarkerHelper.minPoseDetectionConfidence)
+            viewModel.setMinPoseTrackingConfidence(poseLandmarkerHelper.minPoseTrackingConfidence)
+            viewModel.setMinPosePresenceConfidence(poseLandmarkerHelper.minPosePresenceConfidence)
+            viewModel.setDelegate(poseLandmarkerHelper.currentDelegate)
+
+            // Close the PoseLandmarkerHelper and release resources
+            backgroundExecutor.execute { poseLandmarkerHelper.clearPoseLandmarker() }
+        }
+    }
+
+    override fun onError(error: String, errorCode: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onResults(resultBundle: PoseLandmarkerHelper.ResultBundle) {
+        Timber.i("Display the result of inference on overlay")
+        // display on overlay
+        activity?.runOnUiThread {
+            if (_binding != null) {
+                //binding.bottomSheetLayout.inferenceTimeVal.text =
+                //    String.format("%d ms", resultBundle.inferenceTime)
+
+                // Pass necessary information to OverlayView for drawing on the canvas
+                binding.overlay.setResults(
+                    resultBundle.results.first(),
+                    resultBundle.inputImageHeight,
+                    resultBundle.inputImageWidth,
+                    RunningMode.LIVE_STREAM
+                )
+
+                // Force a redraw
+                binding.overlay.invalidate()
+            }
+        }
     }
 }
