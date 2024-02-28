@@ -2,6 +2,7 @@ package com.iteration.climbingmuse.ui.home
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -33,6 +34,7 @@ import com.iteration.climbingmuse.ui.OverlayView
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     private var _binding: FragmentHomeBinding? = null
@@ -55,14 +57,13 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val overlay: OverlayView = binding.overlay
-        val cameraFeed: PreviewView = binding.viewFinder
+        val cameraFeed: PreviewView = binding.liveFeed
 
         return root
     }
@@ -74,10 +75,7 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
         // Wait for the views to be properly laid out
-        binding.viewFinder.post {
-            // Set up the camera and its use cases
-            setUpCamera()
-        }
+        binding.liveFeed.post { setUpCamera() }
 
         // Create the PoseLandmarkerHelper that will handle the inference
         backgroundExecutor.execute {
@@ -96,6 +94,12 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        // Shut down our background executor
+        backgroundExecutor.shutdown()
+        backgroundExecutor.awaitTermination(
+            Long.MAX_VALUE, TimeUnit.NANOSECONDS
+        )
     }
 
     private fun setUpCamera() {
@@ -116,13 +120,13 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         // Preview. Only using the 4:3 ratio because this is the closest to our models
         preview = Preview.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            .setTargetRotation(binding.viewFinder.display.rotation) // FIXME Seems to crash here
+            .setTargetRotation(binding.liveFeed.display.rotation) // FIXME Seems to crash here
             .build()
 
         val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build() //TODO allow LENS_FACING_FRONT
 
         // Attach the viewfinder's surface provider to preview use case
-        preview.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+        preview.setSurfaceProvider(binding.liveFeed.surfaceProvider)
 
 
         // CameraProvider
@@ -132,7 +136,7 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         // ImageAnalysis. Using RGBA 8888 to match how our models work
         imageAnalyzer =
             ImageAnalysis.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .setTargetRotation(binding.viewFinder.display.rotation)
+                .setTargetRotation(binding.liveFeed.display.rotation)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
@@ -149,7 +153,6 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
 
         // camera provides access to CameraControl & CameraInfo
         camera = cameraProvider.bindToLifecycle(this, cameraSelector, *useCases)
-
     }
 
     private fun detectPose(imageProxy: ImageProxy) {
@@ -157,7 +160,7 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         if(this::poseLandmarkerHelper.isInitialized) {
             poseLandmarkerHelper.detectLiveStream(
                 imageProxy = imageProxy,
-                isFrontCamera = true // cameraFacing == CameraSelector.LENS_FACING_FRONT
+                isFrontCamera = false // cameraFacing == CameraSelector.LENS_FACING_FRONT
             )
         }
     }
@@ -215,5 +218,11 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 binding.overlay.invalidate()
             }
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        imageAnalyzer?.targetRotation =
+            binding.liveFeed.display.rotation
     }
 }

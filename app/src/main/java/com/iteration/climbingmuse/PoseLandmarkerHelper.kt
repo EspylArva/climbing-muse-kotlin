@@ -50,7 +50,6 @@ class PoseLandmarkerHelper(
     private var poseLandmarker: PoseLandmarker? = null
 
     init {
-        Timber.d("Setup pose landmarker")
         setupPoseLandmarker()
     }
 
