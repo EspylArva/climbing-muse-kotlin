@@ -29,6 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.MainViewModel
 import com.iteration.climbingmuse.PoseLandmarkerHelper
+import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.databinding.FragmentHomeBinding
 import com.iteration.climbingmuse.ui.OverlayView
 import timber.log.Timber
@@ -37,6 +38,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
+    private val videoProcessor: VideoProcessor = VideoProcessor()
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
@@ -156,7 +158,6 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     }
 
     private fun detectPose(imageProxy: ImageProxy) {
-        Timber.i("Detecting pose")
         if(this::poseLandmarkerHelper.isInitialized) {
             poseLandmarkerHelper.detectLiveStream(
                 imageProxy = imageProxy,
@@ -195,20 +196,27 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     }
 
     override fun onError(error: String, errorCode: Int) {
-        TODO("Not yet implemented")
+        Timber.e("[Error#%s] %s", errorCode, error)
     }
 
     override fun onResults(resultBundle: PoseLandmarkerHelper.ResultBundle) {
-        Timber.i("Display the result of inference on overlay")
         // display on overlay
         activity?.runOnUiThread {
             if (_binding != null) {
                 //binding.bottomSheetLayout.inferenceTimeVal.text =
                 //    String.format("%d ms", resultBundle.inferenceTime)
 
+                videoProcessor.apply { decorators = arrayListOf(
+//                    JointDecorator(),
+//                    AngleDecorator(),
+//                    MuscleEngagementDecorator(),
+                    GravityCenterDecorator()
+                )}
+                videoProcessor.decorate(resultBundle.results.first())
+
                 // Pass necessary information to OverlayView for drawing on the canvas
                 binding.overlay.setResults(
-                    resultBundle.results.first(),
+                    videoProcessor.decorators,
                     resultBundle.inputImageHeight,
                     resultBundle.inputImageWidth,
                     RunningMode.LIVE_STREAM

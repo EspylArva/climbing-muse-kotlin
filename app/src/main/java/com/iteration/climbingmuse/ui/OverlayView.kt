@@ -16,9 +16,7 @@ package com.iteration.climbingmuse.ui
  */
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -26,13 +24,17 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import com.iteration.climbingmuse.R
+import com.iteration.climbingmuse.analysis.ComputerVisionDecorator
+import timber.log.Timber
+import java.util.ArrayList
 import kotlin.math.max
 import kotlin.math.min
 
 class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
 
-    private var results: PoseLandmarkerResult? = null
+    private var decorators = arrayListOf<ComputerVisionDecorator>()
+//    private var results: PoseLandmarkerResult? = null
     private var pointPaint = Paint()
     private var linePaint = Paint()
 
@@ -40,31 +42,72 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     private var imageWidth: Int = 1
     private var imageHeight: Int = 1
 
-    init {
-        initPaints()
-    }
-
     fun clear() {
-        results = null
+//        results = null
+        decorators = arrayListOf()
         pointPaint.reset()
         linePaint.reset()
         invalidate()
-        initPaints()
-    }
-
-    private fun initPaints() {
-        linePaint.color =
-            ContextCompat.getColor(context!!, R.color.mp_color_primary)
-        linePaint.strokeWidth = LANDMARK_STROKE_WIDTH
-        linePaint.style = Paint.Style.STROKE
-
-        pointPaint.color = Color.YELLOW
-        pointPaint.strokeWidth = LANDMARK_STROKE_WIDTH
-        pointPaint.style = Paint.Style.FILL
     }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+
+        val xScalingFactor = imageWidth * scaleFactor
+        val yScalingFactor = imageHeight * scaleFactor
+        Timber.d("Scale: %sx%s. Decorator list size: %s (%s)", xScalingFactor, yScalingFactor, decorators.size, decorators)
+
+        // Testing
+        /*val testPath = Path().apply {
+            // fillType = Path.FillType.EVEN_ODD
+            moveTo(1f,1f)
+            lineTo(1000f, 1000f)
+            lineTo(1f, 1000f)
+            lineTo(1f, 1f)
+            close()
+        }
+
+        val balancePaint = Paint().apply { //TODO Change color/params depending on the real balance
+            color = Color.RED
+            strokeWidth = 12F
+            //isAntiAlias = true
+            style = Paint.Style.FILL
+        }
+
+        canvas.drawPath(testPath, balancePaint)        */
+        //
+
+        decorators.forEach { decorator ->
+            Timber.v("Overlay displaying data from %s", decorator)
+            decorator.pathsToDraw.forEach { pathInfo ->
+                Timber.v("    - Drawing %s", pathInfo)
+                val path = Path().apply {
+                    moveTo(pathInfo.path[0].first * xScalingFactor, pathInfo.path[0].second * yScalingFactor)
+                    for (i in 0..pathInfo.path.size-2) {
+                        lineTo(pathInfo.path[i+1].first * xScalingFactor, pathInfo.path[i+1].second * yScalingFactor)
+                    }
+                    lineTo(pathInfo.path[0].first * xScalingFactor, pathInfo.path[0].second * yScalingFactor)
+                }
+                path.close()
+                canvas.drawPath(path, pathInfo.paint)
+            } //TODO
+            decorator.linesToDraw.forEach {
+                Timber.v("    - Drawing %s", it)
+                canvas.drawLine(it.normalizedStartX * xScalingFactor, it.normalizedStartY * yScalingFactor,
+                    it.normalizedEndX * xScalingFactor, it.normalizedEndY * yScalingFactor,
+                    it.paint.apply { color =  ContextCompat.getColor(context!!, R.color.mp_color_primary)}) // FIXME: should be removed
+            }
+            decorator.pointsToDraw.forEach {
+                Timber.v("    - Drawing %s", it)
+                canvas.drawPoint(it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
+            }
+            decorator.textsToDraw.forEach {
+                Timber.v("    - Drawing %s", it)
+                canvas.drawText(it.text, it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
+            }
+        }
+
+        /*
         results?.let { poseLandmarkerResult ->
             for(landmark in poseLandmarkerResult.landmarks()) {
                 for(normalizedLandmark in landmark) {
@@ -73,6 +116,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                         normalizedLandmark.y() * imageHeight * scaleFactor,
                         pointPaint
                     )
+                    canvas.drawText("${normalizedLandmark.x()} ${normalizedLandmark.y()}",
+                        normalizedLandmark.x() * imageWidth * scaleFactor,
+                        normalizedLandmark.y() * imageHeight * scaleFactor,
+                        pointPaint)
                 }
 
                 PoseLandmarker.POSE_LANDMARKS.forEach {
@@ -85,15 +132,17 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                 }
             }
         }
+        */
     }
 
     fun setResults(
-        poseLandmarkerResults: PoseLandmarkerResult,
+        decorators: ArrayList<ComputerVisionDecorator>,
         imageHeight: Int,
         imageWidth: Int,
         runningMode: RunningMode = RunningMode.IMAGE
     ) {
-        results = poseLandmarkerResults
+        // results = poseLandmarkerResults
+        this.decorators = decorators
 
         this.imageHeight = imageHeight
         this.imageWidth = imageWidth
