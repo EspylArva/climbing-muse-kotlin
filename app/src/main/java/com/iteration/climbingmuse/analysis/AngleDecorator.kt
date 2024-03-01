@@ -13,6 +13,12 @@ import kotlin.math.sqrt
 
 class AngleDecorator : ComputerVisionDecorator {
 
+    private val anglePaint = Paint().apply {
+        color = Color.YELLOW
+        strokeWidth = 12F
+        style = Paint.Style.FILL
+    }
+
     // According to tedbergstrand's description:
     // The numbers by the joints are estimated joint angles.
     override fun process(data: PoseLandmarkerResult) {
@@ -47,11 +53,7 @@ class AngleDecorator : ComputerVisionDecorator {
             val left_ankle_angle = calculateJointAngle(lToe, lAnkle, lKnee)
             val right_ankle_angle = calculateJointAngle(rToe, rAnkle, rKnee)
 
-            val anglePaint = Paint().apply {
-                color = Color.YELLOW
-                strokeWidth = 12F
-                style = Paint.Style.FILL
-            }
+
             texts.addAll(
                 arrayOf(
                     ComputerVisionDecorator.CanvasTextInfo(left_knee_angle.toString(), lKnee.x(), lKnee.y(), anglePaint),
@@ -74,6 +76,10 @@ class AngleDecorator : ComputerVisionDecorator {
     override val textsToDraw: ArrayList<ComputerVisionDecorator.CanvasTextInfo>
         get() = texts
     override val pointsToDraw: ArrayList<ComputerVisionDecorator.CanvasPointInfo>
+        get() = arrayListOf()
+    override val linesToDraw: ArrayList<ComputerVisionDecorator.CanvasLineInfo>
+        get() = arrayListOf()
+    override val pathsToDraw: ArrayList<ComputerVisionDecorator.CanvasPathInfo>
         get() = arrayListOf()
 
     /**

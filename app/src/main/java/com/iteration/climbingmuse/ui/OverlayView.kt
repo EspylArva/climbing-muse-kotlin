@@ -44,28 +44,12 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     private var imageWidth: Int = 1
     private var imageHeight: Int = 1
 
-    init {
-        initPaints()
-    }
-
     fun clear() {
 //        results = null
         decorators = arrayListOf()
         pointPaint.reset()
         linePaint.reset()
         invalidate()
-        initPaints()
-    }
-
-    private fun initPaints() {
-        linePaint.color =
-            ContextCompat.getColor(context!!, R.color.mp_color_primary)
-        linePaint.strokeWidth = LANDMARK_STROKE_WIDTH
-        linePaint.style = Paint.Style.STROKE
-
-        pointPaint.color = Color.YELLOW
-        pointPaint.strokeWidth = LANDMARK_STROKE_WIDTH
-        pointPaint.style = Paint.Style.FILL
     }
 
     override fun draw(canvas: Canvas) {
@@ -75,11 +59,17 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         val yScalingFactor = imageHeight * scaleFactor
         Timber.d("Decorator list size: %s (%s)", decorators.size, decorators)
         decorators.forEach { decorator ->
-            decorator.textsToDraw.forEach {
-                canvas.drawText(it.text, it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
+            decorator.pathsToDraw.forEach {  } //TODO
+            decorator.linesToDraw.forEach {
+                canvas.drawLine(it.normalizedStartX * xScalingFactor, it.normalizedStartY * yScalingFactor,
+                    it.normalizedEndX * xScalingFactor, it.normalizedEndY * yScalingFactor,
+                    it.paint.apply { color =  ContextCompat.getColor(context!!, R.color.mp_color_primary)}) // FIXME: should be removed
             }
             decorator.pointsToDraw.forEach {
                 canvas.drawPoint(it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
+            }
+            decorator.textsToDraw.forEach {
+                canvas.drawText(it.text, it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
             }
         }
 

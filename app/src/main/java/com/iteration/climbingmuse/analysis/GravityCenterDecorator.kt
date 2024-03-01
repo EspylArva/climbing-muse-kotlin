@@ -17,4 +17,8 @@ class GravityCenterDecorator : ComputerVisionDecorator {
         get() = TODO("Not yet implemented")
     override val pointsToDraw: ArrayList<ComputerVisionDecorator.CanvasPointInfo>
         get() = TODO("Not yet implemented")
+    override val linesToDraw: ArrayList<ComputerVisionDecorator.CanvasLineInfo>
+        get() = TODO("Not yet implemented")
+    override val pathsToDraw: ArrayList<ComputerVisionDecorator.CanvasPathInfo>
+        get() = TODO("Not yet implemented")
 }
