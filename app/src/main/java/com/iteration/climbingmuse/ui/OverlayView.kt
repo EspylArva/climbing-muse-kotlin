@@ -59,7 +59,9 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         val yScalingFactor = imageHeight * scaleFactor
         Timber.d("Decorator list size: %s (%s)", decorators.size, decorators)
         decorators.forEach { decorator ->
-            decorator.pathsToDraw.forEach {  } //TODO
+            decorator.pathsToDraw.forEach {
+                canvas.drawPath(it.path, it.paint)
+            } //TODO
             decorator.linesToDraw.forEach {
                 canvas.drawLine(it.normalizedStartX * xScalingFactor, it.normalizedStartY * yScalingFactor,
                     it.normalizedEndX * xScalingFactor, it.normalizedEndY * yScalingFactor,
