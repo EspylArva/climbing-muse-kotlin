@@ -29,10 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.MainViewModel
 import com.iteration.climbingmuse.PoseLandmarkerHelper
-import com.iteration.climbingmuse.analysis.AngleDecorator
-import com.iteration.climbingmuse.analysis.JointDecorator
-import com.iteration.climbingmuse.analysis.MuscleEngagementDecorator
-import com.iteration.climbingmuse.analysis.VideoProcessor
+import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.databinding.FragmentHomeBinding
 import com.iteration.climbingmuse.ui.OverlayView
 import timber.log.Timber
@@ -161,7 +158,6 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     }
 
     private fun detectPose(imageProxy: ImageProxy) {
-        Timber.i("Detecting pose")
         if(this::poseLandmarkerHelper.isInitialized) {
             poseLandmarkerHelper.detectLiveStream(
                 imageProxy = imageProxy,
@@ -204,17 +200,19 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     }
 
     override fun onResults(resultBundle: PoseLandmarkerHelper.ResultBundle) {
-        Timber.i("Display the result of inference on overlay")
         // display on overlay
         activity?.runOnUiThread {
             if (_binding != null) {
                 //binding.bottomSheetLayout.inferenceTimeVal.text =
                 //    String.format("%d ms", resultBundle.inferenceTime)
 
-                videoProcessor.apply { decorators = arrayListOf(JointDecorator(), AngleDecorator(), MuscleEngagementDecorator()) }
+                videoProcessor.apply { decorators = arrayListOf(
+//                    JointDecorator(),
+//                    AngleDecorator(),
+//                    MuscleEngagementDecorator(),
+                    GravityCenterDecorator()
+                )}
                 videoProcessor.decorate(resultBundle.results.first())
-
-                Timber.d("Size of decorators in HomeFragment: %s", videoProcessor.decorators.size)
 
                 // Pass necessary information to OverlayView for drawing on the canvas
                 binding.overlay.setResults(

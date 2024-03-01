@@ -16,9 +16,7 @@ package com.iteration.climbingmuse.ui
  */
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -57,20 +55,54 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
 
         val xScalingFactor = imageWidth * scaleFactor
         val yScalingFactor = imageHeight * scaleFactor
-        Timber.d("Decorator list size: %s (%s)", decorators.size, decorators)
+        Timber.d("Scale: %sx%s. Decorator list size: %s (%s)", xScalingFactor, yScalingFactor, decorators.size, decorators)
+
+        // Testing
+        /*val testPath = Path().apply {
+            // fillType = Path.FillType.EVEN_ODD
+            moveTo(1f,1f)
+            lineTo(1000f, 1000f)
+            lineTo(1f, 1000f)
+            lineTo(1f, 1f)
+            close()
+        }
+
+        val balancePaint = Paint().apply { //TODO Change color/params depending on the real balance
+            color = Color.RED
+            strokeWidth = 12F
+            //isAntiAlias = true
+            style = Paint.Style.FILL
+        }
+
+        canvas.drawPath(testPath, balancePaint)        */
+        //
+
         decorators.forEach { decorator ->
-            decorator.pathsToDraw.forEach {
-                canvas.drawPath(it.path, it.paint)
+            Timber.v("Overlay displaying data from %s", decorator)
+            decorator.pathsToDraw.forEach { pathInfo ->
+                Timber.v("    - Drawing %s", pathInfo)
+                val path = Path().apply {
+                    moveTo(pathInfo.path[0].first * xScalingFactor, pathInfo.path[0].second * yScalingFactor)
+                    for (i in 0..pathInfo.path.size-2) {
+                        lineTo(pathInfo.path[i+1].first * xScalingFactor, pathInfo.path[i+1].second * yScalingFactor)
+                    }
+                    lineTo(pathInfo.path[0].first * xScalingFactor, pathInfo.path[0].second * yScalingFactor)
+                }
+                path.close()
+                canvas.drawPath(path, pathInfo.paint)
             } //TODO
             decorator.linesToDraw.forEach {
+                Timber.v("    - Drawing %s", it)
                 canvas.drawLine(it.normalizedStartX * xScalingFactor, it.normalizedStartY * yScalingFactor,
                     it.normalizedEndX * xScalingFactor, it.normalizedEndY * yScalingFactor,
                     it.paint.apply { color =  ContextCompat.getColor(context!!, R.color.mp_color_primary)}) // FIXME: should be removed
             }
             decorator.pointsToDraw.forEach {
+                Timber.v("    - Drawing %s", it)
                 canvas.drawPoint(it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
             }
             decorator.textsToDraw.forEach {
+                Timber.v("    - Drawing %s", it)
                 canvas.drawText(it.text, it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
             }
         }
