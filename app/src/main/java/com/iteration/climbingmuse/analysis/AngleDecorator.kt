@@ -1,5 +1,8 @@
 package com.iteration.climbingmuse.analysis
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Point
 import com.google.mediapipe.tasks.components.containers.Landmark
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
@@ -14,24 +17,24 @@ class AngleDecorator : ComputerVisionDecorator {
     // The numbers by the joints are estimated joint angles.
     override fun process(data: PoseLandmarkerResult) {
         //FIXME: This should be bound to the technology, not the logic
-        if(data.worldLandmarks().size > 0 && data.worldLandmarks()[0].size > 0) {
-            val head = data.worldLandmarks()[0][VideoProcessor.Joint.HEAD.mpId]
-            val lShoulder = data.worldLandmarks()[0][VideoProcessor.Joint.LEFT_SHOULDER.mpId]
-            val lElbow = data.worldLandmarks()[0][VideoProcessor.Joint.LEFT_ELBOW.mpId]
-            val lHand = data.worldLandmarks()[0][VideoProcessor.Joint.LEFT_HAND.mpId]
-            val lHip = data.worldLandmarks()[0][VideoProcessor.Joint.LEFT_HIP.mpId]
-            val lKnee = data.worldLandmarks()[0][VideoProcessor.Joint.LEFT_KNEE.mpId]
-            val lAnkle = data.worldLandmarks()[0][VideoProcessor.Joint.LEFT_ANKLE.mpId]
-            val lHeel = data.worldLandmarks()[0][VideoProcessor.Joint.LEFT_HEEL.mpId]
-            val lToe = data.worldLandmarks()[0][VideoProcessor.Joint.LEFT_TOE.mpId]
-            val rShoulder = data.worldLandmarks()[0][VideoProcessor.Joint.RIGHT_SHOULDER.mpId]
-            val rElbow = data.worldLandmarks()[0][VideoProcessor.Joint.RIGHT_ELBOW.mpId]
-            val rHand = data.worldLandmarks()[0][VideoProcessor.Joint.RIGHT_HAND.mpId]
-            val rHip = data.worldLandmarks()[0][VideoProcessor.Joint.RIGHT_HIP.mpId]
-            val rKnee = data.worldLandmarks()[0][VideoProcessor.Joint.RIGHT_KNEE.mpId]
-            val rAnkle = data.worldLandmarks()[0][VideoProcessor.Joint.RIGHT_ANKLE.mpId]
-            val rHeel = data.worldLandmarks()[0][VideoProcessor.Joint.RIGHT_HEEL.mpId]
-            val rToe = data.worldLandmarks()[0][VideoProcessor.Joint.RIGHT_TOE.mpId]
+        if(data.landmarks().size > 0 && data.landmarks()[0].size > 0) {
+            val head = data.landmarks()[0][VideoProcessor.Joint.HEAD.mpId]
+            val lShoulder = data.landmarks()[0][VideoProcessor.Joint.LEFT_SHOULDER.mpId]
+            val lElbow = data.landmarks()[0][VideoProcessor.Joint.LEFT_ELBOW.mpId]
+            val lHand = data.landmarks()[0][VideoProcessor.Joint.LEFT_HAND.mpId]
+            val lHip = data.landmarks()[0][VideoProcessor.Joint.LEFT_HIP.mpId]
+            val lKnee = data.landmarks()[0][VideoProcessor.Joint.LEFT_KNEE.mpId]
+            val lAnkle = data.landmarks()[0][VideoProcessor.Joint.LEFT_ANKLE.mpId]
+            val lHeel = data.landmarks()[0][VideoProcessor.Joint.LEFT_HEEL.mpId]
+            val lToe = data.landmarks()[0][VideoProcessor.Joint.LEFT_TOE.mpId]
+            val rShoulder = data.landmarks()[0][VideoProcessor.Joint.RIGHT_SHOULDER.mpId]
+            val rElbow = data.landmarks()[0][VideoProcessor.Joint.RIGHT_ELBOW.mpId]
+            val rHand = data.landmarks()[0][VideoProcessor.Joint.RIGHT_HAND.mpId]
+            val rHip = data.landmarks()[0][VideoProcessor.Joint.RIGHT_HIP.mpId]
+            val rKnee = data.landmarks()[0][VideoProcessor.Joint.RIGHT_KNEE.mpId]
+            val rAnkle = data.landmarks()[0][VideoProcessor.Joint.RIGHT_ANKLE.mpId]
+            val rHeel = data.landmarks()[0][VideoProcessor.Joint.RIGHT_HEEL.mpId]
+            val rToe = data.landmarks()[0][VideoProcessor.Joint.RIGHT_TOE.mpId]
 
             val left_knee_angle = calculateJointAngle(lHip, lKnee, lAnkle)
             val right_knee_angle = calculateJointAngle(rHip, rKnee, rAnkle)
@@ -44,11 +47,34 @@ class AngleDecorator : ComputerVisionDecorator {
             val left_ankle_angle = calculateJointAngle(lToe, lAnkle, lKnee)
             val right_ankle_angle = calculateJointAngle(rToe, rAnkle, rKnee)
 
-            Timber.d("Angles | [left knee:%s] [right knee:%s]", left_knee_angle, right_knee_angle)
+            val anglePaint = Paint().apply {
+                color = Color.YELLOW
+                strokeWidth = 12F
+                style = Paint.Style.FILL
+            }
+            texts.addAll(
+                arrayOf(
+                    ComputerVisionDecorator.CanvasTextInfo(left_knee_angle.toString(), lKnee.x(), lKnee.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(right_knee_angle.toString(), rKnee.x(), rKnee.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(left_hip_angle.toString(), lHip.x(), lHip.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(right_hip_angle.toString(), rHip.x(), rHip.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(left_shoulder_angle.toString(), lShoulder.x(), lShoulder.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(right_shoulder_angle.toString(), rShoulder.x(), rShoulder.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(left_elbow_angle.toString(), lElbow.x(), lElbow.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(right_elbow_angle.toString(), rShoulder.x(), rShoulder.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(left_ankle_angle.toString(), lAnkle.x(), lAnkle.y(), anglePaint),
+                    ComputerVisionDecorator.CanvasTextInfo(right_ankle_angle.toString(), rAnkle.x(), rAnkle.y(), anglePaint)
+            ))
         } else {
             Timber.d("Angles | Nothing detected?")
         }
     }
+
+    private val texts = arrayListOf<ComputerVisionDecorator.CanvasTextInfo>()
+    override val textsToDraw: ArrayList<ComputerVisionDecorator.CanvasTextInfo>
+        get() = texts
+    override val pointsToDraw: ArrayList<ComputerVisionDecorator.CanvasPointInfo>
+        get() = arrayListOf()
 
     /**
      * Calculates the angle between three 3D points which represent joints.
@@ -61,7 +87,7 @@ class AngleDecorator : ComputerVisionDecorator {
      * @param pointC the second outer joint
      * @return the angle value, in degrees
      */
-    private fun calculateJointAngle(pointA: Landmark, pointB: Landmark, pointC: Landmark) : Float {
+    private fun calculateJointAngle(pointA: NormalizedLandmark, pointB: NormalizedLandmark, pointC: NormalizedLandmark) : Float {
         // Based on https://stackoverflow.com/questions/19729831/angle-between-3-points-in-3d-space
 
         val v1 = object {

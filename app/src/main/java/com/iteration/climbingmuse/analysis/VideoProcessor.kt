@@ -1,6 +1,7 @@
 package com.iteration.climbingmuse.analysis
 
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
+import java.util.ArrayList
 
 class VideoProcessor {
 
@@ -28,7 +29,7 @@ class VideoProcessor {
     var decorators: ArrayList<ComputerVisionDecorator> = arrayListOf()
 
     fun decorate(data: PoseLandmarkerResult): Any {
-        decorators.forEach { it -> it.process(data) }
+        decorators.forEach { it.process(data) }
         return data
     }
 }

@@ -26,13 +26,17 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import com.iteration.climbingmuse.R
+import com.iteration.climbingmuse.analysis.ComputerVisionDecorator
+import timber.log.Timber
+import java.util.ArrayList
 import kotlin.math.max
 import kotlin.math.min
 
 class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
 
-    private var results: PoseLandmarkerResult? = null
+    private var decorators = arrayListOf<ComputerVisionDecorator>()
+//    private var results: PoseLandmarkerResult? = null
     private var pointPaint = Paint()
     private var linePaint = Paint()
 
@@ -45,7 +49,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     }
 
     fun clear() {
-        results = null
+//        results = null
+        decorators = arrayListOf()
         pointPaint.reset()
         linePaint.reset()
         invalidate()
@@ -65,6 +70,20 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+
+        val xScalingFactor = imageWidth * scaleFactor
+        val yScalingFactor = imageHeight * scaleFactor
+        Timber.d("Decorator list size: %s (%s)", decorators.size, decorators)
+        decorators.forEach { decorator ->
+            decorator.textsToDraw.forEach {
+                canvas.drawText(it.text, it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
+            }
+            decorator.pointsToDraw.forEach {
+                canvas.drawPoint(it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
+            }
+        }
+
+        /*
         results?.let { poseLandmarkerResult ->
             for(landmark in poseLandmarkerResult.landmarks()) {
                 for(normalizedLandmark in landmark) {
@@ -73,6 +92,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                         normalizedLandmark.y() * imageHeight * scaleFactor,
                         pointPaint
                     )
+                    canvas.drawText("${normalizedLandmark.x()} ${normalizedLandmark.y()}",
+                        normalizedLandmark.x() * imageWidth * scaleFactor,
+                        normalizedLandmark.y() * imageHeight * scaleFactor,
+                        pointPaint)
                 }
 
                 PoseLandmarker.POSE_LANDMARKS.forEach {
@@ -85,15 +108,17 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                 }
             }
         }
+        */
     }
 
     fun setResults(
-        poseLandmarkerResults: PoseLandmarkerResult,
+        decorators: ArrayList<ComputerVisionDecorator>,
         imageHeight: Int,
         imageWidth: Int,
         runningMode: RunningMode = RunningMode.IMAGE
     ) {
-        results = poseLandmarkerResults
+        // results = poseLandmarkerResults
+        this.decorators = decorators
 
         this.imageHeight = imageHeight
         this.imageWidth = imageWidth

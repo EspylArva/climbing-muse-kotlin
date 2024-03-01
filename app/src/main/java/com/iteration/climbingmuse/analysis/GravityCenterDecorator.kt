@@ -12,4 +12,9 @@ class GravityCenterDecorator : ComputerVisionDecorator {
     override fun process(data: PoseLandmarkerResult) {
 
     }
+
+    override val textsToDraw: ArrayList<ComputerVisionDecorator.CanvasTextInfo>
+        get() = TODO("Not yet implemented")
+    override val pointsToDraw: ArrayList<ComputerVisionDecorator.CanvasPointInfo>
+        get() = TODO("Not yet implemented")
 }

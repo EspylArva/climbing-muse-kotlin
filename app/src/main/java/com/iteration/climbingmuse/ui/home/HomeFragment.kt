@@ -30,6 +30,7 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.MainViewModel
 import com.iteration.climbingmuse.PoseLandmarkerHelper
 import com.iteration.climbingmuse.analysis.AngleDecorator
+import com.iteration.climbingmuse.analysis.JointDecorator
 import com.iteration.climbingmuse.analysis.VideoProcessor
 import com.iteration.climbingmuse.databinding.FragmentHomeBinding
 import com.iteration.climbingmuse.ui.OverlayView
@@ -209,12 +210,14 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 //binding.bottomSheetLayout.inferenceTimeVal.text =
                 //    String.format("%d ms", resultBundle.inferenceTime)
 
-                videoProcessor.apply { decorators = arrayListOf(AngleDecorator()) }
+                videoProcessor.apply { decorators = arrayListOf(JointDecorator(), AngleDecorator(), ) }
                 videoProcessor.decorate(resultBundle.results.first())
+
+                Timber.d("Size of decorators in HomeFragment: %s", videoProcessor.decorators.size)
 
                 // Pass necessary information to OverlayView for drawing on the canvas
                 binding.overlay.setResults(
-                    resultBundle.results.first(),
+                    videoProcessor.decorators,
                     resultBundle.inputImageHeight,
                     resultBundle.inputImageWidth,
                     RunningMode.LIVE_STREAM
