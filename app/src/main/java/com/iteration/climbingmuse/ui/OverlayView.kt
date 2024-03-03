@@ -57,26 +57,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         val yScalingFactor = imageHeight * scaleFactor
         Timber.d("Scale: %sx%s. Decorator list size: %s (%s)", xScalingFactor, yScalingFactor, decorators.size, decorators)
 
-        // Testing
-        /*val testPath = Path().apply {
-            // fillType = Path.FillType.EVEN_ODD
-            moveTo(1f,1f)
-            lineTo(1000f, 1000f)
-            lineTo(1f, 1000f)
-            lineTo(1f, 1f)
-            close()
-        }
-
-        val balancePaint = Paint().apply { //TODO Change color/params depending on the real balance
-            color = Color.RED
-            strokeWidth = 12F
-            //isAntiAlias = true
-            style = Paint.Style.FILL
-        }
-
-        canvas.drawPath(testPath, balancePaint)        */
-        //
-
         decorators.forEach { decorator ->
             Timber.v("Overlay displaying data from %s", decorator)
             decorator.pathsToDraw.forEach { pathInfo ->
@@ -90,7 +70,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                 }
                 path.close()
                 canvas.drawPath(path, pathInfo.paint)
-            } //TODO
+            }
             decorator.linesToDraw.forEach {
                 Timber.v("    - Drawing %s", it)
                 canvas.drawLine(it.normalizedStartX * xScalingFactor, it.normalizedStartY * yScalingFactor,
@@ -106,33 +86,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                 canvas.drawText(it.text, it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
             }
         }
-
-        /*
-        results?.let { poseLandmarkerResult ->
-            for(landmark in poseLandmarkerResult.landmarks()) {
-                for(normalizedLandmark in landmark) {
-                    canvas.drawPoint(
-                        normalizedLandmark.x() * imageWidth * scaleFactor,
-                        normalizedLandmark.y() * imageHeight * scaleFactor,
-                        pointPaint
-                    )
-                    canvas.drawText("${normalizedLandmark.x()} ${normalizedLandmark.y()}",
-                        normalizedLandmark.x() * imageWidth * scaleFactor,
-                        normalizedLandmark.y() * imageHeight * scaleFactor,
-                        pointPaint)
-                }
-
-                PoseLandmarker.POSE_LANDMARKS.forEach {
-                    canvas.drawLine(
-                        poseLandmarkerResult.landmarks().get(0).get(it!!.start()).x() * imageWidth * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.start()).y() * imageHeight * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.end()).x() * imageWidth * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.end()).y() * imageHeight * scaleFactor,
-                        linePaint)
-                }
-            }
-        }
-        */
     }
 
     fun setResults(
@@ -141,7 +94,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         imageWidth: Int,
         runningMode: RunningMode = RunningMode.IMAGE
     ) {
-        // results = poseLandmarkerResults
         this.decorators = decorators
 
         this.imageHeight = imageHeight
@@ -160,9 +112,5 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
             }
         }
         invalidate()
-    }
-
-    companion object {
-        private const val LANDMARK_STROKE_WIDTH = 12F
     }
 }
