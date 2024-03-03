@@ -3,4 +3,10 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_settings">Settings</string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_computer_vision">Computer Vision</string>
+    <string name="settings_detection_threshold">Detection Threshold</string>
+    <string name="settings_tracking_threshold">Tracking Threshold</string>
+    <string name="settings_presence_threshold">Presence Threshold</string>
+    <string name="settings_model">Model</string>
 </resources>

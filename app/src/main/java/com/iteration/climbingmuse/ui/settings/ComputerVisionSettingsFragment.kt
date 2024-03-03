@@ -1,17 +1,17 @@
-package com.iteration.climbingmuse.ui.notifications
+package com.iteration.climbingmuse.ui.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.iteration.climbingmuse.databinding.ComputerVisionSettingsFragmentBinding
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.iteration.climbingmuse.databinding.FragmentComputerVisionSettingsBinding
 
 class ComputerVisionSettingsFragment : Fragment() {
 
-    private var _binding: ComputerVisionSettingsFragmentBinding? = null
+    private var _binding: FragmentComputerVisionSettingsBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -24,8 +24,13 @@ class ComputerVisionSettingsFragment : Fragment() {
     ): View {
 //        val notificationsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
 
-        _binding = ComputerVisionSettingsFragmentBinding.inflate(inflater, container, false)
+        _binding = FragmentComputerVisionSettingsBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        val dropdown = binding.menuModel
+
+        (dropdown.editText as? MaterialAutoCompleteTextView)?.setSimpleItems(arrayOf("Item A", "Item B", "Item C"))
+
 
         return root
     }

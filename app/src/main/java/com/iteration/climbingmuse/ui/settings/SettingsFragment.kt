@@ -52,35 +52,7 @@ class SettingsFragment : Fragment() {
 
         val navHostFragment = childFragmentManager.findFragmentById(R.id.settings_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
-
-//        val appBarConfiguration = AppBarConfiguration(setOf( R.id.navigation_permissions_settings, R.id.navigation_computer_vision_settings ))
-//        NavigationUI.setupActionBarWithNavController(requireActivity() as AppCompatActivity, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(navRail, navController)
-
-
-//        navRail.setOnItemSelectedListener { item ->
-//            when(item.itemId) {
-//                R.id.permissions_item -> {
-////                    navController.navigate(R.id.)
-//                    true
-//                }
-//                R.id.computer_vision_item -> {
-//
-//                    true
-//                }
-//                else -> false
-//            }
-//        }
-
-
-//        val navController = (childFragmentManager.findFragmentById(R.id.settings_fragment) as NavHostFragment).navController
-//        val navController = (.findFragmentById(R.id.settings_fragment) as NavHostFragment).navController
-//        val navController = binding.settingsFragment.findNavController()
-
-//        val navController = navHostFragment.findNavController()
-
-//        NavigationUI.setupWithNavController(navRail, navController!!)
-//        NavigationUI.setupActionBarWithNavController(requireActivity() as AppCompatActivity, navController, appBarConfiguration)
 
         return root
     }
