@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation android:id="@+id/settings_sub_navigation"
+    app:startDestination="@id/navigation_permissions_settings"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <fragment
+        android:id="@+id/navigation_permissions_settings"
+        android:name="com.iteration.climbingmuse.ui.settings.PermissionsSettingsFragment"
+        android:label="Permissions"
+        tools:layout="@layout/fragment_permissions_settings" />
+    <fragment
+        android:id="@+id/navigation_computer_vision_settings"
+        android:name="com.iteration.climbingmuse.ui.settings.ComputerVisionSettingsFragment"
+        android:label="Computer Vision"
+        tools:layout="@layout/fragment_computer_vision_settings"/>
+</navigation>
