@@ -207,9 +207,9 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 //    String.format("%d ms", resultBundle.inferenceTime)
 
                 videoProcessor.apply { decorators = arrayListOf(
-//                    JointDecorator(),
-//                    AngleDecorator(),
-//                    MuscleEngagementDecorator(),
+                    JointDecorator(),
+                    AngleDecorator(),
+                    MuscleEngagementDecorator(),
                     GravityCenterDecorator()
                 )}
                 videoProcessor.decorate(resultBundle.results.first())
