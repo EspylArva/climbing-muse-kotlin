@@ -9,4 +9,6 @@
     <string name="settings_tracking_threshold">Tracking Threshold</string>
     <string name="settings_presence_threshold">Presence Threshold</string>
     <string name="settings_model">Model</string>
+    <string name="authorize">Authorize</string>
+    <string name="revoke">Revoke</string>
 </resources>

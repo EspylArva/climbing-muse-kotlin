@@ -3,65 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_permissions"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/card_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Test"
-                android:textSize="36sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="@id/card_logo"
-                app:layout_constraintBottom_toBottomOf="@id/card_logo"
-                app:layout_constraintStart_toEndOf="@id/card_logo"/>
-            <ImageView
-                android:id="@+id/card_logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_home_black_24dp"
-                android:scaleType="center"
-                android:padding="@dimen/activity_vertical_margin"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/card_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/card_logo"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/card_authorize"
-                android:padding="@dimen/activity_vertical_margin"
-                android:text="Lorem ipsume\nDolor sit amet"
-                />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/card_authorize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/card_description"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/card_revoke"
-                android:text="Authorize"/>
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/card_revoke"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/card_authorize"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:text="Revoke"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:listitem="@layout/permission_card_view"/>
 
 
 </LinearLayout>

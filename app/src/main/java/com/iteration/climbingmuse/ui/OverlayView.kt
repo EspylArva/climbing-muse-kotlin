@@ -34,7 +34,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
 
     private var decorators = arrayListOf<ComputerVisionDecorator>()
-//    private var results: PoseLandmarkerResult? = null
     private var pointPaint = Paint()
     private var linePaint = Paint()
 
@@ -43,7 +42,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     private var imageHeight: Int = 1
 
     fun clear() {
-//        results = null
         decorators = arrayListOf()
         pointPaint.reset()
         linePaint.reset()

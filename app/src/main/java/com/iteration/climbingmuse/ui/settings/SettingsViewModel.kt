@@ -3,6 +3,7 @@ package com.iteration.climbingmuse.ui.settings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlin.properties.Delegates
 
 class SettingsViewModel : ViewModel() {
 
@@ -10,4 +11,6 @@ class SettingsViewModel : ViewModel() {
         value = "This is notifications Fragment"
     }
     val text: LiveData<String> = _text
+
 }
+
