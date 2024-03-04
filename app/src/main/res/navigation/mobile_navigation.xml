@@ -9,7 +9,11 @@
         android:id="@+id/navigation_home"
         android:name="com.iteration.climbingmuse.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_permissions"
+            app:destination="@id/navigation_permissions" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -22,4 +26,13 @@
         android:name="com.iteration.climbingmuse.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_permissions"
+        android:name="com.iteration.climbingmuse.app.PermissionsFragment"
+        android:label="Permissions">
+        <action
+            android:id="@+id/action_navigation_permissions_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
 </navigation>

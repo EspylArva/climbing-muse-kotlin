@@ -29,7 +29,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.MainViewModel
 import com.iteration.climbingmuse.PoseLandmarkerHelper
+import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.analysis.*
+import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentHomeBinding
 import com.iteration.climbingmuse.ui.OverlayView
 import timber.log.Timber
@@ -170,13 +172,19 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         super.onResume()
         // TODO Make sure that all permissions are still present, since the
         // user could have removed them while the app was in paused state.
-
-        // Start the PoseLandmarkerHelper again when users come back
-        // to the foreground.
-        backgroundExecutor.execute {
-            if(this::poseLandmarkerHelper.isInitialized) {
-                if (poseLandmarkerHelper.isClose()) {
-                    poseLandmarkerHelper.setupPoseLandmarker()
+        Timber.d("OnResume")
+        if (!PermissionsFragment.hasPermissions(requireContext(), Manifest.permission.CAMERA)) {
+            Navigation.findNavController(
+                requireActivity(), R.id.nav_host_fragment_activity_main
+            ).navigate(R.id.action_navigation_home_to_navigation_permissions)
+        } else {
+            // Start the PoseLandmarkerHelper again when users come back
+            // to the foreground.
+            backgroundExecutor.execute {
+                if(this::poseLandmarkerHelper.isInitialized) {
+                    if (poseLandmarkerHelper.isClose()) {
+                        poseLandmarkerHelper.setupPoseLandmarker()
+                    }
                 }
             }
         }
