@@ -14,7 +14,7 @@ class PermissionCardAdapter(val permissions: List<PermissionCardInfo>) : Recycle
         val inflater = LayoutInflater.from(parent.context)
         val binding = PermissionCardViewBinding.inflate(inflater)
         return PermissionCardViewHolder(binding)
-//            .apply {binding.root.layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)}
+            .apply {binding.root.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)}
     }
 
     override fun onBindViewHolder(holder: PermissionCardViewHolder, position: Int) {
@@ -25,7 +25,7 @@ class PermissionCardAdapter(val permissions: List<PermissionCardInfo>) : Recycle
         holder.setDescription(cardInfo.description)
         holder.setIcon(cardInfo.icon)
 
-        // OBserve livedata?
+        // Observe livedata?
         holder.setButtonsClickable(cardInfo.authorized.value!!)
         holder.setAuthorizeOnClickListener { cardInfo.getPermission() }
         holder.setRevokeOnClickListener { cardInfo.revokePermission() }
@@ -33,7 +33,7 @@ class PermissionCardAdapter(val permissions: List<PermissionCardInfo>) : Recycle
 
     override fun getItemCount(): Int {
         // This should be a fixed size, there is a finite number of permissions to require
-        return 2
+        return permissions.size
     }
 
 }
