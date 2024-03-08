@@ -31,20 +31,14 @@ class PermissionsFragment : Fragment() {
     private fun requireCamera() {
         when {
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
-                // Navigate back to camera
                 navigateToCamera()
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.CAMERA) -> {
-                // In an educational UI, explain to the user why your app requires this
-                // permission for a specific feature to behave as expected, and what
-                // features are disabled if it's declined. In this UI, include a
-                // "cancel" or "no thanks" button that lets the user continue
-                // using your app without granting the permission.
                 MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Permission to access Camera")
                     .setMessage(resources.getString(R.string.camera_permission_justification))
-                    .setPositiveButton(resources.getString(R.string.button_give_permission)) { dialog, which ->
+                    .setPositiveButton(resources.getString(R.string.button_give_permission)) { _,_ ->
                         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
                     }
                     .setNegativeButton(resources.getString(R.string.button_refuse_permission)) { dialog, which ->

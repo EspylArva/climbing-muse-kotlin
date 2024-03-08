@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 class FileExplorerViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+        value = "This functionality is still under development. Come back later!"
     }
     val text: LiveData<String> = _text
 }
