@@ -4,4 +4,11 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="permission_denied">Permission denied</string>
+    <string name="camera_permission_justification">
+        Camera permissions are required to analyse live feed, or to record a video.\n\nConsider grant this app permissions to use camera if you want to use this functionality.
+    </string>
+    <string name="button_give_permission">Give permission</string>
+    <string name="button_refuse_permission">Refuse to give permission</string>
+    <string name="camera_permission_denied">Manifest.CAMERA permission</string>
+    <string name="permission_granted">Permission granted</string>
 </resources>

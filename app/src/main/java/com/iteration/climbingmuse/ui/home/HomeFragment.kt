@@ -1,8 +1,11 @@
 package com.iteration.climbingmuse.ui.home
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +23,8 @@ import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -34,6 +39,7 @@ import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentHomeBinding
 import com.iteration.climbingmuse.ui.OverlayView
+import org.w3c.dom.Text
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -64,36 +70,96 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val overlay: OverlayView = binding.overlay
-        val cameraFeed: PreviewView = binding.liveFeed
-
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         // Init the background executor
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
-        // Wait for the views to be properly laid out
-        binding.liveFeed.post { setUpCamera() }
+        Timber.d("onViewCreated")
 
-        // Create the PoseLandmarkerHelper that will handle the inference
-        backgroundExecutor.execute {
-            poseLandmarkerHelper = PoseLandmarkerHelper(
-                context = requireContext(),
-                runningMode = RunningMode.LIVE_STREAM,
-                minPoseDetectionConfidence = viewModel.currentMinPoseDetectionConfidence,
-                minPoseTrackingConfidence = viewModel.currentMinPoseTrackingConfidence,
-                minPosePresenceConfidence = viewModel.currentMinPosePresenceConfidence,
-                currentDelegate = viewModel.currentDelegate,
-                poseLandmarkerHelperListener = this
-            )
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!PermissionsFragment.hasPermissions(requireContext(), Manifest.permission.CAMERA)) {
+            val permissionDenied = requireContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)
+                .getBoolean(getString(R.string.camera_permission_denied), false)
+                Timber.w("No permission for camera. Permission has already been denied once: %s", permissionDenied)
+
+            if(permissionDenied) {
+                // FIXME: This view does not disappear if permissions are given when app is paused
+                binding.root.addView(TextView(requireContext()).apply {
+                    text = resources.getText(R.string.camera_permission_justification)
+                    textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        justificationMode = JUSTIFICATION_MODE_INTER_WORD
+                    }
+                    textSize = resources.getDimension(R.dimen.medium_text)
+                    layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
+                        .apply {
+                            topToTop = ConstraintSet.PARENT_ID
+                            startToStart = ConstraintSet.PARENT_ID
+                            endToEnd = ConstraintSet.PARENT_ID
+                            bottomToBottom = ConstraintSet.PARENT_ID
+                        }
+                    setPadding(
+                        resources.getDimension(R.dimen.default_padding).toInt(),
+                        resources.getDimension(R.dimen.default_padding).toInt(),
+                        resources.getDimension(R.dimen.default_padding).toInt(),
+                        resources.getDimension(R.dimen.default_padding).toInt()
+                    )
+                })
+            } else {
+                Navigation.findNavController(binding.root).navigate(R.id.action_navigation_home_to_navigation_permissions)
+            }
+        } else {
+            // Wait for the views to be properly laid out
+            binding.liveFeed.post { setUpCamera() }
+
+            // Create the PoseLandmarkerHelper that will handle the inference
+            backgroundExecutor.execute {
+                poseLandmarkerHelper = PoseLandmarkerHelper(
+                    context = requireContext(),
+                    runningMode = RunningMode.LIVE_STREAM,
+                    minPoseDetectionConfidence = viewModel.currentMinPoseDetectionConfidence,
+                    minPoseTrackingConfidence = viewModel.currentMinPoseTrackingConfidence,
+                    minPosePresenceConfidence = viewModel.currentMinPosePresenceConfidence,
+                    currentDelegate = viewModel.currentDelegate,
+                    poseLandmarkerHelperListener = this
+                )
+            }
+
+            // Start the PoseLandmarkerHelper again when users come back
+            // to the foreground.
+            backgroundExecutor.execute {
+                if(this::poseLandmarkerHelper.isInitialized) {
+                    if (poseLandmarkerHelper.isClose()) {
+                        poseLandmarkerHelper.setupPoseLandmarker()
+                    }
+                }
+            }
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        if(this::poseLandmarkerHelper.isInitialized) {
+            viewModel.setMinPoseDetectionConfidence(poseLandmarkerHelper.minPoseDetectionConfidence)
+            viewModel.setMinPoseTrackingConfidence(poseLandmarkerHelper.minPoseTrackingConfidence)
+            viewModel.setMinPosePresenceConfidence(poseLandmarkerHelper.minPosePresenceConfidence)
+            viewModel.setDelegate(poseLandmarkerHelper.currentDelegate)
+
+            // Close the PoseLandmarkerHelper and release resources
+            backgroundExecutor.execute { poseLandmarkerHelper.clearPoseLandmarker() }
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -107,8 +173,7 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     }
 
     private fun setUpCamera() {
-        val cameraProviderFuture =
-            ProcessCameraProvider.getInstance(requireContext())
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(
             {
                 // CameraProvider
@@ -121,6 +186,8 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     }
 
     private fun bindCameraUseCases() {
+        binding.liveFeed.display ?: return
+
         // Preview. Only using the 4:3 ratio because this is the closest to our models
         preview = Preview.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
@@ -165,41 +232,6 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 imageProxy = imageProxy,
                 isFrontCamera = false // cameraFacing == CameraSelector.LENS_FACING_FRONT
             )
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // TODO Make sure that all permissions are still present, since the
-        // user could have removed them while the app was in paused state.
-        Timber.d("OnResume")
-        if (!PermissionsFragment.hasPermissions(requireContext(), Manifest.permission.CAMERA)) {
-            Navigation.findNavController(
-                requireActivity(), R.id.nav_host_fragment_activity_main
-            ).navigate(R.id.action_navigation_home_to_navigation_permissions)
-        } else {
-            // Start the PoseLandmarkerHelper again when users come back
-            // to the foreground.
-            backgroundExecutor.execute {
-                if(this::poseLandmarkerHelper.isInitialized) {
-                    if (poseLandmarkerHelper.isClose()) {
-                        poseLandmarkerHelper.setupPoseLandmarker()
-                    }
-                }
-            }
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if(this::poseLandmarkerHelper.isInitialized) {
-            viewModel.setMinPoseDetectionConfidence(poseLandmarkerHelper.minPoseDetectionConfidence)
-            viewModel.setMinPoseTrackingConfidence(poseLandmarkerHelper.minPoseTrackingConfidence)
-            viewModel.setMinPosePresenceConfidence(poseLandmarkerHelper.minPosePresenceConfidence)
-            viewModel.setDelegate(poseLandmarkerHelper.currentDelegate)
-
-            // Close the PoseLandmarkerHelper and release resources
-            backgroundExecutor.execute { poseLandmarkerHelper.clearPoseLandmarker() }
         }
     }
 
