@@ -1,4 +1,4 @@
-package com.iteration.climbingmuse.ui.home
+package com.iteration.climbingmuse.ui.camera
 
 import android.Manifest
 import android.content.Context
@@ -58,7 +58,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val vm = ViewModelProvider(this).get(HomeViewModel::class.java)
+        val vm = ViewModelProvider(this).get(CameraViewModel::class.java)
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
         return binding.root
     }
