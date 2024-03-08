@@ -2,27 +2,21 @@ package com.iteration.climbingmuse.ui.home
 
 import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
-import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -30,24 +24,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.MainViewModel
 import com.iteration.climbingmuse.PoseLandmarkerHelper
 import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.app.PermissionsFragment
-import com.iteration.climbingmuse.databinding.FragmentHomeBinding
-import com.iteration.climbingmuse.ui.OverlayView
-import org.w3c.dom.Text
+import com.iteration.climbingmuse.databinding.FragmentCameraBinding
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
+class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     private val videoProcessor: VideoProcessor = VideoProcessor()
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
 
@@ -67,56 +58,35 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val vm = ViewModelProvider(this).get(HomeViewModel::class.java)
+        _binding = FragmentCameraBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
         // Init the background executor
         backgroundExecutor = Executors.newSingleThreadExecutor()
-
-        Timber.d("onViewCreated")
-
-
     }
 
     override fun onResume() {
         super.onResume()
         if (!PermissionsFragment.hasPermissions(requireContext(), Manifest.permission.CAMERA)) {
-            val permissionDenied = requireContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)
+            val permissionDenied = requireContext().getSharedPreferences(
+                getString(R.string.app_name),
+                Context.MODE_PRIVATE
+            )
                 .getBoolean(getString(R.string.camera_permission_denied), false)
-                Timber.w("No permission for camera. Permission has already been denied once: %s", permissionDenied)
+            Timber.w(
+                "No permission for camera. Permission has already been denied once: %s",
+                permissionDenied
+            )
 
-            if(permissionDenied) {
-                // FIXME: This view does not disappear if permissions are given when app is paused
-                binding.root.addView(TextView(requireContext()).apply {
-                    text = resources.getText(R.string.camera_permission_justification)
-                    textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        justificationMode = JUSTIFICATION_MODE_INTER_WORD
-                    }
-                    textSize = resources.getDimension(R.dimen.medium_text)
-                    layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
-                        .apply {
-                            topToTop = ConstraintSet.PARENT_ID
-                            startToStart = ConstraintSet.PARENT_ID
-                            endToEnd = ConstraintSet.PARENT_ID
-                            bottomToBottom = ConstraintSet.PARENT_ID
-                        }
-                    setPadding(
-                        resources.getDimension(R.dimen.default_padding).toInt(),
-                        resources.getDimension(R.dimen.default_padding).toInt(),
-                        resources.getDimension(R.dimen.default_padding).toInt(),
-                        resources.getDimension(R.dimen.default_padding).toInt()
-                    )
-                })
+            if (permissionDenied) {
+                displayExplanationView()
             } else {
-                Navigation.findNavController(binding.root).navigate(R.id.action_navigation_home_to_navigation_permissions)
+                Navigation.findNavController(binding.root)
+                    .navigate(R.id.action_navigation_camera_to_navigation_permissions)
             }
         } else {
             // Wait for the views to be properly laid out
@@ -138,7 +108,7 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
             // Start the PoseLandmarkerHelper again when users come back
             // to the foreground.
             backgroundExecutor.execute {
-                if(this::poseLandmarkerHelper.isInitialized) {
+                if (this::poseLandmarkerHelper.isInitialized) {
                     if (poseLandmarkerHelper.isClose()) {
                         poseLandmarkerHelper.setupPoseLandmarker()
                     }
@@ -159,7 +129,6 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
             backgroundExecutor.execute { poseLandmarkerHelper.clearPoseLandmarker() }
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -233,6 +202,31 @@ class HomeFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 isFrontCamera = false // cameraFacing == CameraSelector.LENS_FACING_FRONT
             )
         }
+    }
+
+    private fun displayExplanationView() {
+        // FIXME: This view does not disappear if permissions are given when app is paused
+        binding.root.addView(TextView(requireContext()).apply {
+            text = resources.getText(R.string.camera_permission_justification)
+            textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                justificationMode = JUSTIFICATION_MODE_INTER_WORD
+            }
+            textSize = resources.getDimension(R.dimen.medium_text)
+            layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
+                .apply {
+                    topToTop = ConstraintSet.PARENT_ID
+                    startToStart = ConstraintSet.PARENT_ID
+                    endToEnd = ConstraintSet.PARENT_ID
+                    bottomToBottom = ConstraintSet.PARENT_ID
+                }
+            setPadding(
+                resources.getDimension(R.dimen.default_padding).toInt(),
+                resources.getDimension(R.dimen.default_padding).toInt(),
+                resources.getDimension(R.dimen.default_padding).toInt(),
+                resources.getDimension(R.dimen.default_padding).toInt()
+            )
+        })
     }
 
     override fun onError(error: String, errorCode: Int) {

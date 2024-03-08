@@ -1,14 +1,27 @@
 <resources>
+    <!-- App name. Also used for SharedPreferences -->
     <string name="app_name">ClimbingMuse</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+
+    <!-- Tab titles -->
+    <string name="title_camera">Camera</string>
+    <string name="title_file_explorer">Explore local files</string>
+    <string name="title_settings">Settings</string>
+
+    <!-- Snackbar content -->
     <string name="permission_denied">Permission denied</string>
+    <string name="permission_granted">Permission granted</string>
+
+    <!-- Dynamic textview content. Used to explain why permission is required -->
     <string name="camera_permission_justification">
         Camera permissions are required to analyse live feed, or to record a video.\n\nConsider grant this app permissions to use camera if you want to use this functionality.
     </string>
+
+    <!-- Button text -->
     <string name="button_give_permission">Give permission</string>
     <string name="button_refuse_permission">Refuse to give permission</string>
+
+    <!-- SharedPreferences IDs -->
     <string name="camera_permission_denied">Manifest.CAMERA permission</string>
-    <string name="permission_granted">Permission granted</string>
+
+    <!-- Unclassified -->
 </resources>

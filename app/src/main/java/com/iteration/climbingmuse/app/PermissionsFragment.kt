@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -69,7 +68,7 @@ class PermissionsFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             Navigation.findNavController(
                 requireActivity(),R.id.nav_host_fragment_activity_main
-            ).navigate(R.id.action_navigation_permissions_to_navigation_home)
+            ).navigate(R.id.action_navigation_permissions_to_navigation_camera)
         }
     }
 
