@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/file_explorer_navigation">
+
+    <fragment
+        android:id="@+id/navigation_file_explorer"
+        android:name="com.iteration.climbingmuse.ui.file.FileExplorerFragment"
+        android:label="@string/title_file_explorer"
+        tools:layout="@layout/fragment_file_explorer" >
+        <action
+            android:id="@+id/action_navigation_file_explorer_to_navigation_video_analysis"
+            app:destination="@id/navigation_video_analysis"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_navigation_file_explorer_to_navigation_image_analysis"
+            app:destination="@id/navigation_image_analysis"
+            app:argType="string"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_image_analysis"
+        android:name="com.iteration.climbingmuse.ui.file.ImageAnalysisFragment"
+        android:label="@string/title_image_analysis"
+        tools:layout="@layout/fragment_image_analysis"/>
+
+    <fragment
+        android:id="@+id/navigation_video_analysis"
+        android:name="com.iteration.climbingmuse.ui.file.VideoAnalysisFragment"
+        android:label="@string/title_video_analysis"
+        tools:layout="@layout/fragment_video_analysis"/>
+
+</navigation>

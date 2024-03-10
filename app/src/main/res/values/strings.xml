@@ -23,6 +23,8 @@
     <!-- SharedPreferences IDs -->
     <string name="camera_permission_denied">Manifest.CAMERA permission</string>
     <string name="select_file">Select File</string>
+    <string name="title_image_analysis">Analyse Image</string>
+    <string name="title_video_analysis">Analyse Video</string>
 
     <!-- Unclassified -->
 </resources>

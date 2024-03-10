@@ -11,8 +11,10 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.google.common.net.MediaType
 import com.iteration.climbingmuse.PoseLandmarkerHelper
+import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.databinding.FragmentFileExplorerBinding
 
 class FileExplorerFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener  {
@@ -54,7 +56,10 @@ class FileExplorerFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener
             // Handle the returned Uri
             uri?.let { mediaUri ->
                 when (val mediaType = loadMediaType(mediaUri)) {
-                    MediaType.ANY_IMAGE_TYPE -> Toast.makeText(requireContext(), "This is an image!", Toast.LENGTH_SHORT).show()//runDetectionOnImage(mediaUri)
+                    MediaType.ANY_IMAGE_TYPE -> {
+                        Toast.makeText(requireContext(), "This is an image!", Toast.LENGTH_SHORT).show()
+                        Navigation.findNavController(binding.root).navigate(R.id.action_navigation_file_explorer_to_navigation_image_analysis)
+                    }//runDetectionOnImage(mediaUri)
                     MediaType.ANY_VIDEO_TYPE -> Toast.makeText(requireContext(), "This is a video!", Toast.LENGTH_SHORT).show()//runDetectionOnVideo(mediaUri)
                     MediaType.ANY_TYPE -> {
                         //updateDisplayView(mediaType)
