@@ -22,6 +22,12 @@
 
     <!-- SharedPreferences IDs -->
     <string name="camera_permission_denied">Manifest.CAMERA permission</string>
+    <string name="settings_model">Model</string>
+    <string name="settings_presence_threshold">Presence Threshold</string>
+    <string name="settings_tracking_threshold">Tracking Threshold</string>
+    <string name="settings_detection_threshold">Detection Threshold</string>
+    <string name="computer_vision_settings_warning">Warning: These options may have a high impact on the analysis functionality.\nOnly fine tune these options if you know what you are doing!</string>
+    <string name="title_computer_vision_settings">Computer Vision Settings</string>
 
     <!-- Unclassified -->
 </resources>

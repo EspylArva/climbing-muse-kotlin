@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item
+        android:id="@+id/navigation_computer_vision_settings"
+        android:enabled="true"
+        android:icon="@drawable/baseline_auto_fix_high_24"
+        android:title="@string/title_computer_vision_settings"/>
 </menu>

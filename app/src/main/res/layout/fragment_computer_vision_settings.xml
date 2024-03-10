@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.settings.ComputerVisionSettingsFragment">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/computer_vision_settings_warning"
+        android:textSize="@dimen/big_text"
+        android:padding="@dimen/default_padding"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/big_padding"
+        android:layout_marginBottom="@dimen/big_padding"
+        app:dividerThickness="1dp"
+        app:dividerInsetStart="16dp"
+        app:dividerInsetEnd="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/container_detection_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_detection_threshold"
+            android:textSize="@dimen/medium_text"
+            android:layout_weight="1" />
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider_detection_threshold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:valueFrom="0.0"
+            android:valueTo="100.0"
+            android:layout_marginStart="8dp"
+            android:textAlignment="center"
+            android:layout_weight="5"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container_tracking_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_tracking_threshold"
+            android:textSize="@dimen/medium_text"
+            android:layout_weight="1"/>
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider_tracking_threshold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:valueFrom="0.0"
+            android:valueTo="100.0"
+            android:layout_marginStart="8dp"
+            android:textAlignment="center"
+            android:layout_weight="5"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container_presence_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_presence_threshold"
+            android:textSize="@dimen/medium_text"
+            android:layout_weight="1"/>
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider_presence_threshold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:valueFrom="0.0"
+            android:valueTo="100.0"
+            android:layout_marginStart="8dp"
+            android:textAlignment="center"
+            android:layout_weight="5"/>
+    </LinearLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/big_padding"
+        android:layout_marginBottom="@dimen/big_padding"
+        app:dividerThickness="1dp"
+        app:dividerInsetStart="16dp"
+        app:dividerInsetEnd="16dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/menu_model"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/settings_model">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/big_padding"
+        android:layout_marginBottom="@dimen/big_padding"
+        app:dividerThickness="1dp"
+        app:dividerInsetStart="16dp"
+        app:dividerInsetEnd="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/main_options_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_angle_decorator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Angles"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_gravity_center_decorator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Center of Gravity"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_joint_decorator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Joints"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_muscle_engagement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Muscles"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cog_subchecks_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <CheckBox
+            android:id="@+id/checkbox_child_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show trail"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_child_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show Center of Gravity"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_child_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show stability marker"/>
+    </LinearLayout>
+
+</LinearLayout>
