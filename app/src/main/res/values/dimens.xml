@@ -6,4 +6,5 @@
     <dimen name="medium_text">18sp</dimen>
     <dimen name="default_padding">8dp</dimen>
     <dimen name="big_padding">40dp</dimen>
+    <dimen name="subcheckbox_margin">24dp</dimen>
 </resources>
