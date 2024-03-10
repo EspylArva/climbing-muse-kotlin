@@ -8,7 +8,7 @@
 
     <com.google.android.material.navigationrail.NavigationRailView
         android:id="@+id/settings_navigation_rail"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="match_parent"
         app:headerLayout="@layout/navigation_rail_fab"
         app:menu="@menu/settings_rail_menu"
