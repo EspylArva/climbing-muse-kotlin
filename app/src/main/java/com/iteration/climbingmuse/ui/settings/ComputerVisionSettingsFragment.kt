@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.iteration.climbingmuse.databinding.FragmentComputerVisionSettingsBinding
@@ -22,7 +23,7 @@ class ComputerVisionSettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        val notificationsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
+        val vm = ViewModelProvider(this).get(SettingsViewModel::class.java)
 
         _binding = FragmentComputerVisionSettingsBinding.inflate(inflater, container, false)
         val root: View = binding.root

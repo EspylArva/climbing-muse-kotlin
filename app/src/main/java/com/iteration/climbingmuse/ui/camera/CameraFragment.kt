@@ -21,16 +21,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.google.mediapipe.tasks.vision.core.RunningMode
-import com.iteration.climbingmuse.MainViewModel
 import com.iteration.climbingmuse.PoseLandmarkerHelper
 import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentCameraBinding
+import com.iteration.climbingmuse.ui.settings.SettingsViewModel
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -40,7 +39,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     private val videoProcessor: VideoProcessor = VideoProcessor()
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MainViewModel by activityViewModels()
+    private lateinit var viewModel: SettingsViewModel
 
     private lateinit var backgroundExecutor: ExecutorService
     private var imageAnalyzer: ImageAnalysis? = null
@@ -58,7 +57,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val vm = ViewModelProvider(this).get(CameraViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
         return binding.root
     }
