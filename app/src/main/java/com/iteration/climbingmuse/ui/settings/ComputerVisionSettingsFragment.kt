@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.google.android.material.textfield.TextInputLayout
 import com.iteration.climbingmuse.databinding.FragmentComputerVisionSettingsBinding
 
 class ComputerVisionSettingsFragment : Fragment() {
@@ -28,12 +29,15 @@ class ComputerVisionSettingsFragment : Fragment() {
         _binding = FragmentComputerVisionSettingsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val dropdown = binding.menuModel
-
-        (dropdown.editText as? MaterialAutoCompleteTextView)?.setSimpleItems(arrayOf("Item A", "Item B", "Item C"))
+        val modelDropdown = binding.menuModel
+        setupDropdown(modelDropdown)
 
 
         return root
+    }
+
+    private fun setupDropdown(modelDropdown: TextInputLayout) {
+        (modelDropdown.editText as? MaterialAutoCompleteTextView)?.setSimpleItems(arrayOf("Item A", "Item B", "Item C"))
     }
 
     override fun onDestroyView() {

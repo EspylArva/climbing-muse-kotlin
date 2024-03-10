@@ -34,7 +34,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
 
     private var decorators = arrayListOf<ComputerVisionDecorator>()
-//    private var results: PoseLandmarkerResult? = null
     private var pointPaint = Paint()
     private var linePaint = Paint()
 
@@ -43,7 +42,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     private var imageHeight: Int = 1
 
     fun clear() {
-//        results = null
         decorators = arrayListOf()
         pointPaint.reset()
         linePaint.reset()
@@ -56,26 +54,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         val xScalingFactor = imageWidth * scaleFactor
         val yScalingFactor = imageHeight * scaleFactor
         Timber.d("Scale: %sx%s. Decorator list size: %s (%s)", xScalingFactor, yScalingFactor, decorators.size, decorators)
-
-        // Testing
-        /*val testPath = Path().apply {
-            // fillType = Path.FillType.EVEN_ODD
-            moveTo(1f,1f)
-            lineTo(1000f, 1000f)
-            lineTo(1f, 1000f)
-            lineTo(1f, 1f)
-            close()
-        }
-
-        val balancePaint = Paint().apply { //TODO Change color/params depending on the real balance
-            color = Color.RED
-            strokeWidth = 12F
-            //isAntiAlias = true
-            style = Paint.Style.FILL
-        }
-
-        canvas.drawPath(testPath, balancePaint)        */
-        //
 
         decorators.forEach { decorator ->
             Timber.v("Overlay displaying data from %s", decorator)
@@ -106,33 +84,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                 canvas.drawText(it.text, it.normalizedX * xScalingFactor, it.normalizedY * yScalingFactor, it.paint)
             }
         }
-
-        /*
-        results?.let { poseLandmarkerResult ->
-            for(landmark in poseLandmarkerResult.landmarks()) {
-                for(normalizedLandmark in landmark) {
-                    canvas.drawPoint(
-                        normalizedLandmark.x() * imageWidth * scaleFactor,
-                        normalizedLandmark.y() * imageHeight * scaleFactor,
-                        pointPaint
-                    )
-                    canvas.drawText("${normalizedLandmark.x()} ${normalizedLandmark.y()}",
-                        normalizedLandmark.x() * imageWidth * scaleFactor,
-                        normalizedLandmark.y() * imageHeight * scaleFactor,
-                        pointPaint)
-                }
-
-                PoseLandmarker.POSE_LANDMARKS.forEach {
-                    canvas.drawLine(
-                        poseLandmarkerResult.landmarks().get(0).get(it!!.start()).x() * imageWidth * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.start()).y() * imageHeight * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.end()).x() * imageWidth * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.end()).y() * imageHeight * scaleFactor,
-                        linePaint)
-                }
-            }
-        }
-        */
     }
 
     fun setResults(
