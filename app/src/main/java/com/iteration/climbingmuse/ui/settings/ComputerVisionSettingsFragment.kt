@@ -4,16 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.children
+import androidx.core.widget.doOnTextChanged
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputLayout
+import com.iteration.climbingmuse.R
+import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
 import com.iteration.climbingmuse.databinding.FragmentComputerVisionSettingsBinding
+import com.iteration.climbingmuse.ui.MaterialViewHelper.Companion.setSubCheckboxes
 
 class ComputerVisionSettingsFragment : Fragment() {
 
     private var _binding: FragmentComputerVisionSettingsBinding? = null
+    private lateinit var vm: SettingsViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -24,20 +33,21 @@ class ComputerVisionSettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val vm = ViewModelProvider(this).get(SettingsViewModel::class.java)
-
-        _binding = FragmentComputerVisionSettingsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val modelDropdown = binding.menuModel
-        setupDropdown(modelDropdown)
-
-
-        return root
+        vm = ViewModelProvider(this).get(SettingsViewModel::class.java)
+//        _binding = FragmentComputerVisionSettingsBinding.inflate(inflater, container, false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_computer_vision_settings, container, false)
+        binding.lifecycleOwner = this;
+        binding.viewmodel = vm
+        return binding.root
     }
 
-    private fun setupDropdown(modelDropdown: TextInputLayout) {
-        (modelDropdown.editText as? MaterialAutoCompleteTextView)?.setSimpleItems(arrayOf("Item A", "Item B", "Item C"))
+    override fun onResume() {
+        super.onResume()
+        setupDropdown(binding.menuModel)
+    }
+
+    private fun setupDropdown(modelDropdown: MaterialAutoCompleteTextView) {
+        modelDropdown.setSimpleItems(R.array.models_spinner_titles)
     }
 
     override fun onDestroyView() {

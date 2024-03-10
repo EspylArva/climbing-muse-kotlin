@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.iteration.climbingmuse
+package com.iteration.climbingmuse.analysis
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -21,7 +21,6 @@ import android.graphics.Matrix
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.SystemClock
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.camera.core.ImageProxy
 import com.google.mediapipe.framework.image.BitmapImageBuilder
@@ -37,7 +36,7 @@ class PoseLandmarkerHelper(
     var minPoseDetectionConfidence: Float = DEFAULT_POSE_DETECTION_CONFIDENCE,
     var minPoseTrackingConfidence: Float = DEFAULT_POSE_TRACKING_CONFIDENCE,
     var minPosePresenceConfidence: Float = DEFAULT_POSE_PRESENCE_CONFIDENCE,
-    var currentModel: Int = MODEL_POSE_LANDMARKER_FULL,
+    var currentModel: String = MODEL_POSE_LANDMARKER_FULL,
     var currentDelegate: Int = DELEGATE_CPU,
     var runningMode: RunningMode = RunningMode.IMAGE,
     val context: Context,
@@ -367,9 +366,12 @@ class PoseLandmarkerHelper(
         const val DEFAULT_NUM_POSES = 1
         const val OTHER_ERROR = 0
         const val GPU_ERROR = 1
-        const val MODEL_POSE_LANDMARKER_FULL = 0
-        const val MODEL_POSE_LANDMARKER_LITE = 1
-        const val MODEL_POSE_LANDMARKER_HEAVY = 2
+
+        // Options for model should be contained at resources.getStringArray(R.array.models_spinner_titles)
+        const val MODEL_POSE_LANDMARKER_FULL = "Pose Landmarker Full"
+        const val MODEL_POSE_LANDMARKER_LITE = "Pose Landmarker Lite"
+        const val MODEL_POSE_LANDMARKER_HEAVY ="Pose Landmarker Heavy"
+
     }
 
     data class ResultBundle(

@@ -31,5 +31,11 @@
     <string name="cv_settings_detection_threshold">Detection Threshold</string>
     <string name="cv_settings_warning">Warning: These options may have a high impact on the analysis functionality.\nOnly fine tune these options if you know what you are doing!</string>
 
+    <string-array name="models_spinner_titles">
+        <item>Pose Landmarker Full</item>
+        <item>Pose Landmarker Lite</item>
+        <item>Pose Landmarker Heavy</item>
+    </string-array>
+
     <!-- Unclassified -->
 </resources>

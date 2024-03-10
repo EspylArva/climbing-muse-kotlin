@@ -1,19 +1,31 @@
 package com.iteration.climbingmuse.ui.settings
 
+import androidx.databinding.Bindable
+import androidx.databinding.Observable
+import androidx.databinding.ObservableInt
+import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.iteration.climbingmuse.PoseLandmarkerHelper
+import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
+import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_FULL
+import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_HEAVY
+import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_LITE
+import timber.log.Timber
 
-class SettingsViewModel : ViewModel() {
-    private var _model = PoseLandmarkerHelper.MODEL_POSE_LANDMARKER_FULL
+class SettingsViewModel : ViewModel(), Observable {
+
+
+    @Bindable
+    val model = MutableLiveData<String>().apply { value = MODEL_POSE_LANDMARKER_FULL }
+//    val
+
     private var _delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
     private var _minPoseDetectionConfidence: Float = PoseLandmarkerHelper.DEFAULT_POSE_DETECTION_CONFIDENCE
     private var _minPoseTrackingConfidence: Float = PoseLandmarkerHelper.DEFAULT_POSE_TRACKING_CONFIDENCE
     private var _minPosePresenceConfidence: Float = PoseLandmarkerHelper.DEFAULT_POSE_PRESENCE_CONFIDENCE
 
     val currentDelegate: Int get() = _delegate
-    val currentModel: Int get() = _model
     val currentMinPoseDetectionConfidence: Float
         get() = _minPoseDetectionConfidence
     val currentMinPoseTrackingConfidence: Float
@@ -37,7 +49,19 @@ class SettingsViewModel : ViewModel() {
         _minPosePresenceConfidence = confidence
     }
 
-    fun setModel(model: Int) {
-        _model = model
+    private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }
+    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+        callbacks.add(callback)
     }
+
+    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+        callbacks.remove(callback)
+    }
+
+    fun notifyPropertyChanged(fieldId: Int) {
+        callbacks.notifyCallbacks(this, fieldId, null)
+    }
+
+
+
 }
