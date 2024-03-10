@@ -95,7 +95,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                 Timber.v("    - Drawing %s", it)
                 canvas.drawLine(it.normalizedStartX * xScalingFactor, it.normalizedStartY * yScalingFactor,
                     it.normalizedEndX * xScalingFactor, it.normalizedEndY * yScalingFactor,
-                    it.paint.apply { color =  ContextCompat.getColor(context!!, R.color.mp_color_primary)}) // FIXME: should be removed
+                    it.paint.apply { color =  ContextCompat.getColor(context!!, R.color.md_theme_light_primary)}) // FIXME: should be removed
             }
             decorator.pointsToDraw.forEach {
                 Timber.v("    - Drawing %s", it)
