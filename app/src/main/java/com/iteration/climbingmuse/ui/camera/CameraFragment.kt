@@ -7,8 +7,10 @@ import android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
@@ -63,6 +65,13 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         super.onViewCreated(view, savedInstanceState)
         // Init the background executor
         backgroundExecutor = Executors.newSingleThreadExecutor()
+        binding.fabUtilityCamera.setOnLongClickListener {
+            val popupMenu = PopupMenu(context, it)
+            popupMenu.menuInflater.inflate(R.menu.sub_fab_menu, popupMenu.menu)
+            popupMenu.show()
+
+            true
+        }
 
     }
 
