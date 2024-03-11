@@ -55,6 +55,7 @@
             android:text="Recording"/>
     </com.iteration.climbingmuse.ui.FlowLayout>
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_utility_camera"
         android:layout_width="wrap_content"
