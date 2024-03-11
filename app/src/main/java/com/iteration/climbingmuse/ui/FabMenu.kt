@@ -13,7 +13,8 @@ import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.iteration.climbingmuse.R
 
-
+// This is based on LinearLayout: https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/core/java/android/widget/LinearLayout.java
+// and inspired by FloatingActionButton by Clans: https://github.com/Clans/FloatingActionButton/tree/master
 class FabMenu : LinearLayout {
 
     val mainFab: FloatingActionButton = FloatingActionButton(context)
