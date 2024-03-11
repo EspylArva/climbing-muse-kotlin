@@ -6,15 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.camera.CameraFragment">
 
+
     <androidx.camera.view.PreviewView
         android:id="@+id/live_feed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:scaleType="fillStart"
+        tools:foreground="@mipmap/bertone_sample"
+        app:layout_constraintDimensionRatio="3:4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.iteration.climbingmuse.ui.OverlayView
         android:layout_width="match_parent"
@@ -25,4 +28,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+
+
+    <com.iteration.climbingmuse.ui.FlowLayout
+        android:id="@+id/chips_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding"
+        app:itemSpacing="@dimen/default_padding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_theme_light_onSecondary"
+            app:chipBackgroundColor="@color/md_theme_light_secondary"
+            app:chipIcon="@drawable/baseline_auto_fix_high_24"
+            app:chipIconTint="@color/md_theme_light_onSecondary"
+            android:text="CV enabled"/>
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_theme_light_onSecondary"
+            app:chipBackgroundColor="@color/md_theme_light_secondary"
+            app:chipIcon="@drawable/baseline_fiber_manual_record_24"
+            android:text="Recording"/>
+    </com.iteration.climbingmuse.ui.FlowLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,16 @@
 package com.iteration.climbingmuse.ui
 
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
+import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.appcompat.widget.AppCompatCheckBox
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.chip.Chip
+import com.iteration.climbingmuse.R
+import java.util.concurrent.Flow
 
 class MaterialViewHelper {
 
@@ -54,6 +62,46 @@ class MaterialViewHelper {
             }
             this.addOnCheckedStateChangedListener(parentOnCheckedStateChangedListener)
         }
+
+
+        class ChipBuilder(val context: Context) {
+            val secondaryColor = ResourcesCompat.getColorStateList(context.resources, R.color.md_theme_light_secondary, context.theme)
+            val onSecondaryColor = ResourcesCompat.getColorStateList(context.resources, R.color.md_theme_light_onSecondary, context.theme)
+            var chip: Chip = new().build()
+
+            fun new() : ChipBuilder {
+                chip = Chip(context).apply {
+                    chipBackgroundColor = secondaryColor
+                    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    setTextColor(onSecondaryColor)
+                }
+                return this
+            }
+
+            fun setIcon(id: Int, keepColor: Boolean = false) : ChipBuilder {
+                val icon = ResourcesCompat.getDrawable(context.resources, id, context.theme)
+                chip.chipIcon = icon
+
+                if (!keepColor) {
+                    chip.chipIconTint = onSecondaryColor
+                }
+                return this
+            }
+
+            fun setText(label: String) : ChipBuilder {
+                chip.apply { text = label }
+                return this
+            }
+
+            fun build() : Chip {
+                return chip
+            }
+
+        }
     }
+
+
+
+
 
 }
