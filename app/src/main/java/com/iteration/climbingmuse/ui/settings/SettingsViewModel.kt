@@ -1,12 +1,14 @@
 package com.iteration.climbingmuse.ui.settings
 
 import androidx.databinding.Bindable
+import androidx.databinding.InverseMethod
 import androidx.databinding.Observable
 import androidx.databinding.ObservableInt
 import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
 import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_FULL
 import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_HEAVY
@@ -18,6 +20,25 @@ class SettingsViewModel : ViewModel(), Observable {
 
     @Bindable
     val model = MutableLiveData<String>().apply { value = MODEL_POSE_LANDMARKER_FULL }
+
+    // Angle options
+    @Bindable
+    val showAngles = MutableLiveData<Boolean>().apply { value = true }
+    // Center of Gravity options
+    @Bindable
+    val showCOGTrail = MutableLiveData<Boolean>().apply { value = true }
+    @Bindable
+    val showCOGMarker = MutableLiveData<Boolean>().apply { value = false }
+    @Bindable
+    val showBalanceMarker = MutableLiveData<Boolean>().apply { value = false }
+    // Joints options
+    @Bindable
+    val showJointMarkers = MutableLiveData<Boolean>().apply { value = true }
+    // Muscles options
+    @Bindable
+    val showMuscleMarkers = MutableLiveData<Boolean>().apply { value = true }
+    @Bindable
+    val showMuscleEngagement = MutableLiveData<Boolean>().apply { value = true }
 //    val
 
     private var _delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
@@ -63,5 +84,42 @@ class SettingsViewModel : ViewModel(), Observable {
     }
 
 
+    object MaterialCheckBoxConverter {
+
+        enum class State {
+            indeterminate,
+            checked,
+            unchecked
+        }
+
+
+        @InverseMethod("stringToState")
+        @JvmStatic
+        fun stateToString(state: Int) : State {
+            return when(state) {
+                MaterialCheckBox.STATE_CHECKED -> State.checked
+                MaterialCheckBox.STATE_INDETERMINATE -> State.indeterminate
+                MaterialCheckBox.STATE_UNCHECKED -> State.unchecked
+                else -> {
+                    Timber.e("State [%s] should not exist", state)
+                    return State.indeterminate
+                }
+            }
+        }
+
+        @JvmStatic
+        fun stringToState(state: String) : Int {
+            return when(state) {
+                "checked" -> MaterialCheckBox.STATE_CHECKED
+                "indeterminate" -> MaterialCheckBox.STATE_INDETERMINATE
+                "unchecked" -> MaterialCheckBox.STATE_UNCHECKED
+                else -> {
+                    Timber.e("State [%s] should not exist", state)
+                    return MaterialCheckBox.STATE_INDETERMINATE
+                }
+            }
+
+        }
+    }
 
 }

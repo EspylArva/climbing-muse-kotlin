@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
 import com.iteration.climbingmuse.databinding.FragmentComputerVisionSettingsBinding
+import com.iteration.climbingmuse.ui.MaterialViewHelper
 import com.iteration.climbingmuse.ui.MaterialViewHelper.Companion.setSubCheckboxes
 
 class ComputerVisionSettingsFragment : Fragment() {
@@ -44,11 +45,28 @@ class ComputerVisionSettingsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setupDropdown(binding.menuModel)
+        setupCheckboxes()
     }
 
     private fun setupDropdown(modelDropdown: MaterialAutoCompleteTextView) {
         modelDropdown.setSimpleItems(R.array.models_spinner_titles)
     }
+
+    @SuppressWarnings("unchecked")
+    private fun setupCheckboxes() {
+        //val angles = binding.checkAngleDecorator
+
+        val centerOfGravity = binding.checkGravityCenterDecorator
+        val cogChildren = binding.cogSubchecksContainer.children as Sequence<MaterialCheckBox>
+        centerOfGravity.setSubCheckboxes(cogChildren)
+
+        //val joints = binding.checkJointDecorator
+
+        val muscles = binding.checkMuscleDecorator
+        val musclesChildren = binding.musclesSubchecksContainer.children as Sequence<MaterialCheckBox>
+        muscles.setSubCheckboxes(musclesChildren)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

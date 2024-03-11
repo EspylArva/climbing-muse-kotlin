@@ -34,6 +34,8 @@ class MaterialViewHelper {
             for (child in childrenCheckBoxes) {
                 (child as MaterialCheckBox).addOnCheckedStateChangedListener(childOnCheckedStateChangedListener)
             }
+
+            this.setParentState(childrenCheckBoxes, parentOnCheckedStateChangedListener)
         }
 
         private fun MaterialCheckBox.setParentState(childrenCheckBoxes: Sequence<CheckBox>, parentOnCheckedStateChangedListener: MaterialCheckBox.OnCheckedStateChangedListener) {
