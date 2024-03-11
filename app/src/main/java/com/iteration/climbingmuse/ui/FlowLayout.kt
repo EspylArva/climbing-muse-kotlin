@@ -16,13 +16,15 @@ package com.iteration.climbingmuse.ui
  * limitations under the License.
  */
 
-import com.iteration.climbingmuse.R
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.core.widgets.ConstraintWidget
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Placeholder
 import androidx.core.view.MarginLayoutParamsCompat
 import androidx.core.view.ViewCompat
 
@@ -141,8 +143,15 @@ class FlowLayout : ViewGroup {
         var childBottom = childTop
         var childEnd: Int
         val maxChildEnd = right - left - paddingEnd
+
         for (i in 0 until childCount) {
+
             val child = getChildAt(i)
+
+            if (isInEditMode) {
+                child.visibility = View.VISIBLE
+            }
+
             if (child.visibility == GONE) {
                 child.setTag(com.google.android.material.R.id.row_index_key, -1)
                 continue
