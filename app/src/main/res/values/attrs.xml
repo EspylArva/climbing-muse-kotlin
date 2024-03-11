@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FabMenu">
+        <!-- See https://github.com/Clans/FloatingActionButton/blob/master/library/src/main/res/values/attrs.xml for inspiration-->
+        <attr name="fab_icon" format="reference"/>
+        <attr name="show_label" format="boolean"/>
+        <attr name="shape" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="round" value="1"/>
+            <enum name="roundedSquare" value="2"/>
+        </attr>
+
+        <attr name="direction" format="enum">
+            <enum name="bottomToTop" value="0"/>
+            <enum name="topToBottom" value="1"/>
+            <enum name="leftToRight" value="2"/>
+            <enum name="rightToLeft" value="3"/>
+            <enum name="bottomLeftCorner" value="10"/>
+            <enum name="bottomRightCorner" value="11"/>
+            <enum name="topLeftCorner" value="12"/>
+            <enum name="topRightCorner" value="13"/>
+        </attr>
+
+        <attr name="veil_alpha" format="float"/>
+        <attr name="veil_tint" format="reference"/>
+        <attr name="menu_overlay_alpha" format="float"/>
+        <attr name="menu_overlay_tint" format="reference"/>
+    </declare-styleable>
+
+</resources>
