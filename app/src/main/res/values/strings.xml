@@ -30,6 +30,15 @@
     <string name="cv_settings_tracking_threshold">Tracking Threshold</string>
     <string name="cv_settings_detection_threshold">Detection Threshold</string>
     <string name="cv_settings_warning">Warning: These options may have a high impact on the analysis functionality.\nOnly fine tune these options if you know what you are doing!</string>
+    <string name="cv_settings_muscles">Muscles</string>
+    <string name="cv_settings_show_muscle_markers">Show muscle markers</string>
+    <string name="cv_settings_show_muscle_engagement">Show muscle engagement</string>
+    <string name="cv_settings_show_stability_marker">Show stability marker</string>
+    <string name="cv_settings_joints">Joints</string>
+    <string name="cv_settings_show_center_of_gravity">Show Center of Gravity</string>
+    <string name="cv_settings_show_trail">Show trail</string>
+    <string name="cv_settings_center_of_gravity">Center of Gravity</string>
+    <string name="cv_settings_angles">Angles</string>
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>
