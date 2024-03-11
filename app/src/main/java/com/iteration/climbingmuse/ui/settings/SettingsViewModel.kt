@@ -17,29 +17,39 @@ import timber.log.Timber
 
 class SettingsViewModel : ViewModel(), Observable {
 
-
     @Bindable
-    val model = MutableLiveData<String>().apply { value = MODEL_POSE_LANDMARKER_FULL }
+    val model = MutableLiveData<String>()
 
     // Angle options
     @Bindable
-    val showAngles = MutableLiveData<Boolean>().apply { value = true }
+    val showAngles = MutableLiveData<Boolean>()
     // Center of Gravity options
     @Bindable
-    val showCOGTrail = MutableLiveData<Boolean>().apply { value = true }
+    val showCOGTrail = MutableLiveData<Boolean>()
     @Bindable
-    val showCOGMarker = MutableLiveData<Boolean>().apply { value = false }
+    val showCOGMarker = MutableLiveData<Boolean>()
     @Bindable
-    val showBalanceMarker = MutableLiveData<Boolean>().apply { value = false }
+    val showBalanceMarker = MutableLiveData<Boolean>()
     // Joints options
     @Bindable
-    val showJointMarkers = MutableLiveData<Boolean>().apply { value = true }
+    val showJointMarkers = MutableLiveData<Boolean>()
     // Muscles options
     @Bindable
-    val showMuscleMarkers = MutableLiveData<Boolean>().apply { value = true }
+    val showMuscleMarkers = MutableLiveData<Boolean>()
     @Bindable
-    val showMuscleEngagement = MutableLiveData<Boolean>().apply { value = true }
-//    val
+    val showMuscleEngagement = MutableLiveData<Boolean>()
+    init {
+        model.postValue(MODEL_POSE_LANDMARKER_FULL)
+
+        showAngles.postValue(true)
+        showCOGTrail.postValue(true)
+        showCOGMarker.postValue(false)
+        showBalanceMarker.postValue(false)
+        showJointMarkers.postValue(true)
+        showMuscleMarkers.postValue(true)
+        showMuscleEngagement.postValue(true)
+
+    }
 
     private var _delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
     private var _minPoseDetectionConfidence: Float = PoseLandmarkerHelper.DEFAULT_POSE_DETECTION_CONFIDENCE
@@ -120,6 +130,23 @@ class SettingsViewModel : ViewModel(), Observable {
             }
 
         }
+    }
+
+    override fun toString(): String {
+        return """
+                    Settings: ${this.hashCode()}
+                    - Model: ${model.value}
+                    - Decorators:
+                        - Angle: ${showAngles.value}
+                        - Center of Gravity:
+                            - Marker: ${showCOGMarker.value}
+                            - Trail: ${showCOGTrail.value}
+                            - Balance: ${showBalanceMarker.value}
+                        - Joints: ${showJointMarkers.value}
+                        - Muscles:
+                            - Marker: ${showMuscleMarkers.value}
+                            - Engagement: ${showMuscleEngagement.value}
+                """.trimIndent()
     }
 
 }

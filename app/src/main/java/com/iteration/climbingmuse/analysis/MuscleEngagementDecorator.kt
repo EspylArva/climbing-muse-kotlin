@@ -1,14 +1,14 @@
 package com.iteration.climbingmuse.analysis
 
 import android.graphics.Paint
-import androidx.core.content.ContextCompat
-import com.google.mediapipe.formats.proto.LandmarkProto
+import androidx.lifecycle.MutableLiveData
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
-import com.iteration.climbingmuse.R
-import com.iteration.climbingmuse.ui.OverlayView
 
-class MuscleEngagementDecorator : ComputerVisionDecorator {
+class MuscleEngagementDecorator(
+    val showMuscleMarkers: MutableLiveData<Boolean>,
+    val showMuscleEngagement: MutableLiveData<Boolean> //TODO Implement this function
+) : ComputerVisionDecorator {
 
     private val paint = Paint().apply {
         strokeWidth = 12F
@@ -18,6 +18,10 @@ class MuscleEngagementDecorator : ComputerVisionDecorator {
     // According to tedbergstrand's description:
     // The limb colors show how flexed/engaged that joint is -- red is heavily flexed, green is extended.
     override fun process(data: PoseLandmarkerResult) {
+        super.process(data)
+        if(showMuscleMarkers.value == false && showMuscleEngagement.value == false) {
+            return
+        }
 
         for(landmark in data.landmarks()) {
             for (normalizedLandmark in landmark) {

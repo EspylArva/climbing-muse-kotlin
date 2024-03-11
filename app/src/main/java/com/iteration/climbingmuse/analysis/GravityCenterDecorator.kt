@@ -2,13 +2,16 @@ package com.iteration.climbingmuse.analysis
 
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.PathEffect
+import androidx.lifecycle.MutableLiveData
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import kotlin.math.abs
 
-class GravityCenterDecorator : ComputerVisionDecorator {
+class GravityCenterDecorator(
+    val showCOGMarker: MutableLiveData<Boolean>,
+    val showCOGTrail: MutableLiveData<Boolean>, // TODO implement this function
+    val showBalanceMarker: MutableLiveData<Boolean>
+) : ComputerVisionDecorator {
     private val cogPaint = Paint().apply {
         color = Color.YELLOW
         strokeWidth = 18F
@@ -21,12 +24,23 @@ class GravityCenterDecorator : ComputerVisionDecorator {
     // And the blue squiggly line is tracking the center of gravity -- which doesn't work perfectly in this case because the camera moves.
     // But it's still pretty neat.
     override fun process(data: PoseLandmarkerResult) {
+        super.process(data)
+        if(showCOGMarker.value == false && showCOGTrail.value == false && showBalanceMarker.value == false) {
+            return
+        }
+
         if(data.landmarks().size > 0) {
             val cog = processCOG(data.landmarks()[0])
 
-            points.add(ComputerVisionDecorator.CanvasPointInfo(cog.x(), cog.y(), cogPaint))
-            addBalanceMarker(cog, data.landmarks()[0])
-            addCOGTrail(data.landmarks()[0])
+            if(showCOGMarker.value == true) {
+                points.add(ComputerVisionDecorator.CanvasPointInfo(cog.x(), cog.y(), cogPaint))
+            }
+            if(showBalanceMarker.value == true) {
+                addBalanceMarker(cog, data.landmarks()[0])
+            }
+            if(showCOGTrail.value == true) {
+                addCOGTrail(data.landmarks()[0])
+            }
         }
 
     }

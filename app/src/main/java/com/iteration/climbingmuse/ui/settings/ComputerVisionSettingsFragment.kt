@@ -19,11 +19,12 @@ import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
 import com.iteration.climbingmuse.databinding.FragmentComputerVisionSettingsBinding
 import com.iteration.climbingmuse.ui.MaterialViewHelper
 import com.iteration.climbingmuse.ui.MaterialViewHelper.Companion.setSubCheckboxes
+import timber.log.Timber
 
 class ComputerVisionSettingsFragment : Fragment() {
 
     private var _binding: FragmentComputerVisionSettingsBinding? = null
-    private lateinit var vm: SettingsViewModel
+    private val vm: SettingsViewModel by activityViewModels()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -34,11 +35,10 @@ class ComputerVisionSettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        vm = ViewModelProvider(this).get(SettingsViewModel::class.java)
-//        _binding = FragmentComputerVisionSettingsBinding.inflate(inflater, container, false)
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_computer_vision_settings, container, false)
         binding.lifecycleOwner = this;
         binding.viewmodel = vm
+        Timber.d("SettingsVM hash: %s", vm.hashCode())
         return binding.root
     }
 

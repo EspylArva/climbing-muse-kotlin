@@ -7,7 +7,12 @@ import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
 interface ComputerVisionDecorator {
-    fun process(data: PoseLandmarkerResult)
+    fun process(data: PoseLandmarkerResult) {
+        textsToDraw.removeAll {_ -> true}
+        pointsToDraw.removeAll {_ -> true}
+        linesToDraw.removeAll {_ -> true}
+        pathsToDraw.removeAll {_ -> true}
+    }
     val textsToDraw: ArrayList<CanvasTextInfo>
     val pointsToDraw: ArrayList<CanvasPointInfo>
     val linesToDraw: ArrayList<CanvasLineInfo>

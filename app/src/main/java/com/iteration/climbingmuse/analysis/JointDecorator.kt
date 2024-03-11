@@ -1,13 +1,11 @@
 package com.iteration.climbingmuse.analysis
 
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
+import androidx.lifecycle.MutableLiveData
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
-import com.iteration.climbingmuse.ui.OverlayView
 
-class JointDecorator : ComputerVisionDecorator {
+class JointDecorator(val showJointMarkers: MutableLiveData<Boolean>) : ComputerVisionDecorator {
 
     val jointPaint = Paint().apply {
         color = Color.YELLOW
@@ -16,7 +14,8 @@ class JointDecorator : ComputerVisionDecorator {
     }
 
     override fun process(data: PoseLandmarkerResult) {
-        if(data.landmarks().size > 0) {
+        super.process(data)
+        if(data.landmarks().size > 0 && showJointMarkers.value == true) {
             data.landmarks()[0].forEach {
                 points.add(ComputerVisionDecorator.CanvasPointInfo(it.x(), it.y(), jointPaint))
             }

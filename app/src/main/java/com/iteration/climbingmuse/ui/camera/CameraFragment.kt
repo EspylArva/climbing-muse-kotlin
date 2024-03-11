@@ -21,7 +21,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
@@ -39,7 +39,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     private val videoProcessor: VideoProcessor = VideoProcessor()
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by activityViewModels()
 
     private lateinit var backgroundExecutor: ExecutorService
     private var imageAnalyzer: ImageAnalysis? = null
@@ -49,15 +49,12 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     private var cameraProvider: ProcessCameraProvider? = null
     private var camera: Camera? = null
 
-    private val REQUEST_CODE_CAMERA_PERMISSION = 101
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -66,6 +63,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         super.onViewCreated(view, savedInstanceState)
         // Init the background executor
         backgroundExecutor = Executors.newSingleThreadExecutor()
+
     }
 
     override fun onResume() {
@@ -88,6 +86,13 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     .navigate(R.id.action_navigation_camera_to_navigation_permissions)
             }
         } else {
+            videoProcessor.decorators = arrayListOf(
+                AngleDecorator(viewModel.showAngles),
+                GravityCenterDecorator(viewModel.showCOGMarker, viewModel.showCOGTrail, viewModel.showBalanceMarker),
+                JointDecorator(viewModel.showJointMarkers),
+                MuscleEngagementDecorator(viewModel.showMuscleMarkers, viewModel.showMuscleEngagement)
+            )
+
             // Wait for the views to be properly laid out
             binding.liveFeed.post { setUpCamera() }
 
@@ -159,7 +164,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         // Preview. Only using the 4:3 ratio because this is the closest to our models
         preview = Preview.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            .setTargetRotation(binding.liveFeed.display.rotation) // FIXME Seems to crash here
+            .setTargetRotation(binding.liveFeed.display.rotation)
             .build()
 
         val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build() //TODO allow LENS_FACING_FRONT
@@ -236,16 +241,9 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         // display on overlay
         activity?.runOnUiThread {
             if (_binding != null) {
-                //binding.bottomSheetLayout.inferenceTimeVal.text =
-                //    String.format("%d ms", resultBundle.inferenceTime)
+                Timber.d(viewModel.toString())
 
-                videoProcessor.apply { decorators = arrayListOf(
-                    JointDecorator(),
-                    AngleDecorator(),
-                    MuscleEngagementDecorator(),
-                    GravityCenterDecorator()
-                )}
-                videoProcessor.decorate(resultBundle.results.first())
+                videoProcessor.processData(resultBundle.results.first())
 
                 // Pass necessary information to OverlayView for drawing on the canvas
                 binding.overlay.setResults(
@@ -254,6 +252,8 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     resultBundle.inputImageWidth,
                     RunningMode.LIVE_STREAM
                 )
+
+                // TODO Can use inference time from resultBundle
 
                 // Force a redraw
                 binding.overlay.invalidate()

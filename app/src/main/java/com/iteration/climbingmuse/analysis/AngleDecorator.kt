@@ -1,17 +1,15 @@
 package com.iteration.climbingmuse.analysis
 
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Point
-import com.google.mediapipe.tasks.components.containers.Landmark
+import androidx.lifecycle.MutableLiveData
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import timber.log.Timber
 import kotlin.math.acos
 import kotlin.math.sqrt
 
-class AngleDecorator : ComputerVisionDecorator {
+class AngleDecorator(val showAngles: MutableLiveData<Boolean>) : ComputerVisionDecorator {
 
     private val anglePaint = Paint().apply {
         color = Color.YELLOW
@@ -22,6 +20,12 @@ class AngleDecorator : ComputerVisionDecorator {
     // According to tedbergstrand's description:
     // The numbers by the joints are estimated joint angles.
     override fun process(data: PoseLandmarkerResult) {
+        super.process(data)
+        Timber.d("Show angles: %s", showAngles.value)
+        if (showAngles.value == false) {
+            return
+        }
+
         //FIXME: This should be bound to the technology, not the logic
         if(data.landmarks().size > 0 && data.landmarks()[0].size > 0) {
             val head = data.landmarks()[0][VideoProcessor.Joint.HEAD.mpId]

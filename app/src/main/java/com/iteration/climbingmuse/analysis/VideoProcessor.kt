@@ -28,7 +28,7 @@ class VideoProcessor {
 
     var decorators: ArrayList<ComputerVisionDecorator> = arrayListOf()
 
-    fun decorate(data: PoseLandmarkerResult): Any {
+    fun processData(data: PoseLandmarkerResult): Any {
         decorators.forEach { it.process(data) }
         return data
     }
