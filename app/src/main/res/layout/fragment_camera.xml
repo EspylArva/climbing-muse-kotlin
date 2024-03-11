@@ -54,4 +54,15 @@
             app:chipIcon="@drawable/baseline_fiber_manual_record_24"
             android:text="Recording"/>
     </com.iteration.climbingmuse.ui.FlowLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_utility_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/big_padding"
+        app:srcCompat="@drawable/baseline_auto_fix_high_24"
+        app:backgroundTint="@color/md_theme_light_primary"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
