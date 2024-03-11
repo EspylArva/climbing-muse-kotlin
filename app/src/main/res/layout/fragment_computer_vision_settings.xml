@@ -44,13 +44,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="@={viewmodel.showAngles}"
-                        android:text="@string/cv_settings_angles"
+                        android:text="Angles"
                         tools:checked="true"/>
                     <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/check_gravity_center_decorator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/cv_settings_center_of_gravity"
+                        android:text="Center of Gravity"
                         tools:checkedState="indeterminate"/>
                     <LinearLayout
                         android:id="@+id/cog_subchecks_container"
@@ -64,7 +64,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="@={viewmodel.showCOGTrail}"
-                            android:text="@string/cv_settings_show_trail"
+                            android:text="Show trail"
                             tools:checked="true"/>
 
                         <CheckBox
@@ -72,7 +72,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="@={viewmodel.showCOGMarker}"
-                            android:text="@string/cv_settings_show_center_of_gravity"
+                            android:text="Show Center of Gravity"
                             tools:checked="false"/>
 
                         <CheckBox
@@ -80,7 +80,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="@={viewmodel.showBalanceMarker}"
-                            android:text="@string/cv_settings_show_stability_marker"
+                            android:text="Show stability marker"
                             tools:checked="false"/>
                     </LinearLayout>
                     <com.google.android.material.checkbox.MaterialCheckBox
@@ -88,14 +88,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="@={viewmodel.showJointMarkers}"
-                        android:text="@string/cv_settings_joints"
+                        android:text="Joints"
                         tools:checked="true"/>
                     <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/check_muscle_decorator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="false"
-                        android:text="@string/cv_settings_muscles"
+                        android:text="Muscles"
                         tools:checkedState="checked"/>
                     <LinearLayout
                         android:id="@+id/muscles_subchecks_container"
@@ -109,7 +109,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="@={viewmodel.showMuscleMarkers}"
-                            android:text="@string/cv_settings_show_muscle_markers"
+                            android:text="Show muscle markers"
                             tools:checked="true"/>
 
                         <CheckBox
@@ -117,7 +117,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="@={viewmodel.showMuscleEngagement}"
-                            android:text="@string/cv_settings_show_muscle_engagement"
+                            android:text="Show muscle engagement"
                             tools:checked="true"/>
                     </LinearLayout>
                 </LinearLayout>
