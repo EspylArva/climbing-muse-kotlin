@@ -10,11 +10,16 @@
             <enum name="roundedSquare" value="2"/>
         </attr>
 
-        <attr name="direction" format="enum">
+        <!-- The orientation of child buttons. Can be bottomToTop, topToBottom, leftToRight, rightToLeft, or bloom -->
+        <attr name="orientation" format="enum">
             <enum name="bottomToTop" value="0"/>
             <enum name="topToBottom" value="1"/>
             <enum name="leftToRight" value="2"/>
             <enum name="rightToLeft" value="3"/>
+            <enum name="bloom" value="4"/>
+        </attr>
+        <!-- The position of the main button. Can be bottomLeftCorner, bottomRightCorner, topLeftCorner, or topRightCorner -->
+        <attr name="position" format="enum">
             <enum name="bottomLeftCorner" value="10"/>
             <enum name="bottomRightCorner" value="11"/>
             <enum name="topLeftCorner" value="12"/>

@@ -22,9 +22,6 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.core.widgets.ConstraintWidget
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Placeholder
 import androidx.core.view.MarginLayoutParamsCompat
 import androidx.core.view.ViewCompat
 
