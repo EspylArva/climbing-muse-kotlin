@@ -39,6 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_cv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/md_theme_light_onSecondary"
@@ -47,6 +48,16 @@
             app:chipIconTint="@color/md_theme_light_onSecondary"
             android:text="CV enabled"/>
         <com.google.android.material.chip.Chip
+            android:id="@+id/chip_inference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_theme_light_onSecondary"
+            app:chipBackgroundColor="@color/md_theme_light_secondary"
+            app:chipIcon="@drawable/baseline_timer_24"
+            app:chipIconTint="@color/md_theme_light_onSecondary"
+            android:text="Inference"/>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_recording"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/md_theme_light_onSecondary"
@@ -55,15 +66,40 @@
             android:text="Recording"/>
     </com.iteration.climbingmuse.ui.FlowLayout>
 
+    <com.iteration.climbingmuse.ui.FabMenu
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_utility_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:fab_icon="@drawable/ic_notifications_black_24dp"
+        app:position="bottomRightCorner"
+        app:orientation="bottomToTop"
+        app:veil_alpha="100"
+        app:veil_tint="@color/md_theme_light_primaryContainer"
+
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="@dimen/big_padding"
-        app:srcCompat="@drawable/baseline_auto_fix_high_24"
-        app:backgroundTint="@color/md_theme_light_primary"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_toggle_cv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/baseline_auto_fix_high_24"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_toggle_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_baseline_photo_camera_24"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_toggle_inference_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_baseline_drive_file_move_24"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_toggle_chips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_dashboard_black_24dp"/>
+    </com.iteration.climbingmuse.ui.FabMenu>
 </androidx.constraintlayout.widget.ConstraintLayout>

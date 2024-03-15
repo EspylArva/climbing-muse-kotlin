@@ -20,41 +20,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="This is some text"/>
-
-    <com.iteration.climbingmuse.ui.FabMenu
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        app:fab_icon="@drawable/ic_notifications_black_24dp"
-        app:position="bottomRightCorner"
-        app:orientation="bottomToTop"
-        app:veil_alpha="100"
-        app:veil_tint="@color/md_theme_light_primaryContainer"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_toggle_cv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/baseline_auto_fix_high_24"/>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_toggle_record"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_baseline_photo_camera_24"/>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_toggle_option3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_baseline_drive_file_move_24"/>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/toggle_chips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_dashboard_black_24dp"/>
-    </com.iteration.climbingmuse.ui.FabMenu>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,12 +25,15 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
+import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
 import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentCameraBinding
+import com.iteration.climbingmuse.ui.MaterialViewHelper
 import com.iteration.climbingmuse.ui.settings.SettingsViewModel
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
@@ -65,12 +68,58 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         super.onViewCreated(view, savedInstanceState)
         // Init the background executor
         backgroundExecutor = Executors.newSingleThreadExecutor()
-        binding.fabUtilityCamera.setOnLongClickListener {
-            val popupMenu = PopupMenu(context, it)
-            popupMenu.menuInflater.inflate(R.menu.sub_fab_menu, popupMenu.menu)
-            popupMenu.show()
 
-            true
+        setFabButtonsListeners()
+
+
+    }
+
+    private fun setFabButtonsListeners() {
+        binding.fabToggleCv.setOnClickListener {
+            val cvEnabled = binding.chipCv.visibility == View.VISIBLE
+            if(cvEnabled) {
+                // Stop recording
+                binding.chipCv.visibility = View.GONE
+            } else {
+                // Start recording
+                binding.chipCv.visibility = View.VISIBLE
+                Snackbar.make(binding.root, resources.getString(R.string.enable_cv), Snackbar.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.fabToggleRecord.setOnClickListener {
+            // TODO This bool should be equal to "isRecording"
+            val isRecording = binding.chipRecording.visibility == View.VISIBLE
+            if(isRecording) {
+                // Stop recording
+                binding.chipRecording.visibility = View.GONE
+            } else {
+                // Start recording
+                binding.chipRecording.visibility = View.VISIBLE
+                Snackbar.make(binding.root, resources.getString(R.string.recording), Snackbar.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.fabToggleInferenceTime.setOnClickListener {
+            val isToggled = binding.chipInference.visibility == View.VISIBLE
+            if(isToggled) {
+                // Stop recording
+                binding.chipInference.visibility = View.GONE
+            } else {
+                // Start recording
+                binding.chipInference.visibility = View.VISIBLE
+            }
+        }
+
+        binding.fabToggleChips.setOnClickListener {
+            val isVisible = binding.chipsContainer.visibility == View.VISIBLE
+            if(isVisible) {
+                // Stop recording
+                binding.chipsContainer.visibility = View.GONE
+            } else {
+                // Start recording
+                binding.chipsContainer.visibility = View.VISIBLE
+            }
         }
 
     }
@@ -262,7 +311,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     RunningMode.LIVE_STREAM
                 )
 
-                // TODO Can use inference time from resultBundle
+                binding.chipInference.text = "Inference: ${resultBundle.inferenceTime}"
 
                 // Force a redraw
                 binding.overlay.invalidate()

@@ -75,9 +75,9 @@ class MaterialViewHelper {
 
 
         class ChipBuilder(val context: Context) {
-            val secondaryColor = ResourcesCompat.getColorStateList(context.resources, R.color.md_theme_light_secondary, context.theme)
-            val onSecondaryColor = ResourcesCompat.getColorStateList(context.resources, R.color.md_theme_light_onSecondary, context.theme)
-            var chip: Chip = new().build()
+            private val secondaryColor = ResourcesCompat.getColorStateList(context.resources, R.color.md_theme_light_secondary, context.theme)
+            private val onSecondaryColor = ResourcesCompat.getColorStateList(context.resources, R.color.md_theme_light_onSecondary, context.theme)
+            private var chip: Chip = new().build()
 
             fun new() : ChipBuilder {
                 chip = Chip(context).apply {

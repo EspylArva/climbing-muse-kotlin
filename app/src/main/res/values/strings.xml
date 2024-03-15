@@ -39,6 +39,9 @@
     <string name="cv_settings_show_trail">Show trail</string>
     <string name="cv_settings_center_of_gravity">Center of Gravity</string>
     <string name="cv_settings_angles">Angles</string>
+    <string name="recording">Recording video</string>
+    <string name="chip_recording">Recording</string>
+    <string name="enable_cv">Enabling analysis</string>
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>
