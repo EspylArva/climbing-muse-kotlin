@@ -10,7 +10,10 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.*
+import androidx.core.graphics.red
+import androidx.core.graphics.green
+import androidx.core.graphics.blue
+import androidx.core.view.children
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.iteration.climbingmuse.R
@@ -23,9 +26,22 @@ class FabMenu : ConstraintLayout {
     private var orientation: Int
     private var position: Int
     private var mainIconId: Int
+    private var veilAlpha: Int
+    private var veilTint: Int
+
 
     private val defaultSpacing = resources.getDimension(R.dimen.default_padding).toInt()
+    private val scale = resources.displayMetrics.density
+
+    // Components of FabMenu
     private val mainFab: FloatingActionButton = FloatingActionButton(context)
+    private val fabMenu: ConstraintLayout = ConstraintLayout(context)
+    private val subFabMenu: LinearLayout = LinearLayout(context)
+    private val veil = View(context)
+    private val subFabMenuId = View.generateViewId()
+    private val fabMenuId = View.generateViewId()
+    private val veilId = View.generateViewId()
+    private val mainFabId = View.generateViewId()
 
     // Colors used for the main button
     private val primaryColor = ResourcesCompat.getColorStateList(resources, R.color.md_theme_light_primary, context.theme)
@@ -34,10 +50,6 @@ class FabMenu : ConstraintLayout {
     private val secondaryColor = ResourcesCompat.getColorStateList(resources, R.color.md_theme_light_secondary, context.theme)
     private val onSecondaryColor = ResourcesCompat.getColorStateList(resources, R.color.md_theme_light_onSecondary, context.theme)
 
-    private val subFabMenuId = View.generateViewId()
-    private val fabMenuId = View.generateViewId()
-    private val transparentOverlayId = View.generateViewId()
-    private val mainFabId = View.generateViewId()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     @JvmOverloads
@@ -48,6 +60,8 @@ class FabMenu : ConstraintLayout {
         orientation = attributes.getInt(R.styleable.FabMenu_orientation, 0)
         position = attributes.getInt(R.styleable.FabMenu_position, 0)
         mainIconId = attributes.getResourceId(R.styleable.FabMenu_fab_icon, R.drawable.baseline_fiber_manual_record_24)
+        veilAlpha = attributes.getResourceId(R.styleable.FabMenu_veil_alpha, 100)
+        veilTint = attributes.getResourceId(R.styleable.FabMenu_veil_tint, R.color.white)
     }
 
     override fun onFinishInflate() {
@@ -68,7 +82,7 @@ class FabMenu : ConstraintLayout {
         setupOverlays()
         setupMenu(position, mainFab, subFabMenu)
 
-        findViewById<View>(transparentOverlayId).visibility = GONE
+        findViewById<View>(veilId).visibility = GONE
         findViewById<LinearLayout>(subFabMenuId).visibility = GONE
 
         Timber.d("""
@@ -80,7 +94,9 @@ class FabMenu : ConstraintLayout {
     }
 
     private fun setupMenu(position: Int, mainFab: FloatingActionButton, subFabMenu: LinearLayout) {
-        val menu = ConstraintLayout(context).apply {
+        fabMenu.addView(mainFab)
+        fabMenu.addView(subFabMenu)
+        fabMenu.apply {
             layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                 when(position) {
                     BOTTOM_RIGHT_CORNER -> {
@@ -104,49 +120,48 @@ class FabMenu : ConstraintLayout {
                         setMargins(defaultSpacing, defaultSpacing, 0, 0)
                     }
                 }
-                setPadding(defaultSpacing, defaultSpacing, defaultSpacing, defaultSpacing)
+                val paddingPx = MaterialViewHelper.dpToPx(context, defaultSpacing).toInt()
+                setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
             }
             background = AppCompatResources.getDrawable(context, R.drawable.white_rounded_menu)
+            id = fabMenuId
         }
 
-        menu.addView(mainFab)
-        menu.addView(subFabMenu)
-        addView(menu)
+        addView(fabMenu)
     }
 
 
     private fun setupSubFabMenu(childFabs: List<View>, subFabOrientation: Int) : LinearLayout {
-        val menu = LinearLayout(context)
-        menu.apply {
+        subFabMenu.apply {
             layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                 when(subFabOrientation) {
                     TOP_TO_BOTTOM -> {
                         topToBottom = mainFabId
-                        menu.orientation = LinearLayout.VERTICAL
+                        subFabMenu.orientation = LinearLayout.VERTICAL
                         startToStart = mainFabId
                         endToEnd = mainFabId
                     }
                     BOTTOM_TO_TOP -> {
                         bottomToTop = mainFabId
-                        menu.orientation = LinearLayout.VERTICAL
+                        subFabMenu.orientation = LinearLayout.VERTICAL
                         startToStart = mainFabId
                         endToEnd = mainFabId
                     }
                     LEFT_TO_RIGHT -> {
                         startToEnd = mainFabId
-                        menu.orientation = LinearLayout.HORIZONTAL
+                        subFabMenu.orientation = LinearLayout.HORIZONTAL
                         topToTop = mainFabId
                         bottomToBottom = mainFabId
                     }
                     RIGHT_TO_LEFT -> {
                         endToStart = mainFabId
-                        menu.orientation = LinearLayout.HORIZONTAL
+                        subFabMenu.orientation = LinearLayout.HORIZONTAL
                         topToTop = mainFabId
                         bottomToBottom = mainFabId
                     }
                     BLOOM -> { // TODO
                         bottomToTop = mainFabId
-                        menu.orientation = LinearLayout.VERTICAL
+                        subFabMenu.orientation = LinearLayout.VERTICAL
                         startToStart = mainFabId
                         endToEnd = mainFabId
                         Snackbar.make(this@FabMenu, "Bloom orientation is not implemented yet", Snackbar.LENGTH_SHORT).show()
@@ -158,6 +173,12 @@ class FabMenu : ConstraintLayout {
         }
 
         childFabs.forEach {
+            removeView(it)
+            if(orientation == BOTTOM_TO_TOP || orientation == RIGHT_TO_LEFT) {
+                subFabMenu.addView(it, 0)
+            } else {
+                subFabMenu.addView(it)
+            }
             Timber.d("""
                 Settings for ${it.id}
                 - Keep custom icon color: TBD
@@ -171,33 +192,30 @@ class FabMenu : ConstraintLayout {
 
             // TODO make this depend on number of children, fill the space...
             it.layoutParams = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-                setMargins(0,0,0, resources.getDimension(R.dimen.default_padding).toInt())
+                setMargins(0,0,0, defaultSpacing)
             }
-
-            removeView(it)
-            menu.addView(it)
         }
-
-        return menu
+        return subFabMenu
     }
 
 
 
     private fun setupOverlays() {
-        val transparentOverlay = View(context).apply {
+        veil.apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT).apply {
                 startToStart = LayoutParams.PARENT_ID
                 endToEnd = LayoutParams.PARENT_ID
                 topToTop = LayoutParams.PARENT_ID
                 bottomToBottom = LayoutParams.PARENT_ID
             }
-            setBackgroundColor(Color.argb(128,255,0,255)) //FIXME: Change color to white?
-            id = transparentOverlayId
+            val veilColor = resources.getColor(veilTint, context.theme)
+            setBackgroundColor(Color.argb(veilAlpha,veilColor.red, veilColor.green, veilColor.blue)) //FIXME: Change color to white?
+            id = veilId
         }
-        transparentOverlay.setOnClickListener {
+        veil.setOnClickListener {
             findViewById<FloatingActionButton>(mainFabId).performLongClick()
         }
-        addView(transparentOverlay)
+        addView(veil)
     }
 
 
@@ -212,7 +230,6 @@ class FabMenu : ConstraintLayout {
                 }
             }
             size = FloatingActionButton.SIZE_NORMAL // TODO: might need to change this size?
-            // TODO set color, icon
             backgroundTintList = primaryColor
             imageTintList = onPrimaryColor
             setImageDrawable(AppCompatResources.getDrawable(context, mainIconId))
@@ -225,7 +242,7 @@ class FabMenu : ConstraintLayout {
             findViewById<LinearLayout>(subFabMenuId).apply {
                 visibility = if(this.visibility == GONE) VISIBLE else GONE
             }
-            findViewById<View>(transparentOverlayId).apply {
+            findViewById<View>(veilId).apply {
                 visibility = if(this.visibility == GONE) VISIBLE else GONE
             }
             true

@@ -1,16 +1,17 @@
 package com.iteration.climbingmuse.ui
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
+import android.content.res.Resources
+import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.CheckBox
+import androidx.annotation.Dimension
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.chip.Chip
 import com.iteration.climbingmuse.R
-import java.util.concurrent.Flow
+
 
 class MaterialViewHelper {
 
@@ -61,6 +62,15 @@ class MaterialViewHelper {
                 this.checkedState = MaterialCheckBox.STATE_INDETERMINATE
             }
             this.addOnCheckedStateChangedListener(parentOnCheckedStateChangedListener)
+        }
+
+        fun dpToPx(context: Context, @Dimension(unit = Dimension.DP) dp: Int): Float {
+            val r: Resources = context.resources
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp.toFloat(),
+                r.displayMetrics
+            )
         }
 
 

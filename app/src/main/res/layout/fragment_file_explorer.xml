@@ -18,7 +18,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="This is some text"/>
 
     <com.iteration.climbingmuse.ui.FabMenu
         android:layout_width="match_parent"
@@ -27,6 +28,8 @@
         app:fab_icon="@drawable/ic_notifications_black_24dp"
         app:position="bottomRightCorner"
         app:orientation="bottomToTop"
+        app:veil_alpha="100"
+        app:veil_tint="@color/md_theme_light_primaryContainer"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
