@@ -10,8 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.children
-import androidx.core.view.setMargins
+import androidx.core.view.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.iteration.climbingmuse.R
@@ -25,7 +24,7 @@ class FabMenu : ConstraintLayout {
     private var position: Int
     private var mainIconId: Int
 
-
+    private val defaultSpacing = resources.getDimension(R.dimen.default_padding).toInt()
     private val mainFab: FloatingActionButton = FloatingActionButton(context)
 
     // Colors used for the main button
@@ -35,9 +34,10 @@ class FabMenu : ConstraintLayout {
     private val secondaryColor = ResourcesCompat.getColorStateList(resources, R.color.md_theme_light_secondary, context.theme)
     private val onSecondaryColor = ResourcesCompat.getColorStateList(resources, R.color.md_theme_light_onSecondary, context.theme)
 
-    private val menu_id = View.generateViewId()
-    private val overlay_id = View.generateViewId()
-    private val main_fab_id = View.generateViewId()
+    private val subFabMenuId = View.generateViewId()
+    private val fabMenuId = View.generateViewId()
+    private val transparentOverlayId = View.generateViewId()
+    private val mainFabId = View.generateViewId()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     @JvmOverloads
@@ -62,64 +62,123 @@ class FabMenu : ConstraintLayout {
                 - IconId: $mainIconId
         """.trimIndent())
 
-        setupMainFab(mainIconId, position, orientation)
+
+        val mainFab = setupMainFab(mainIconId, position, orientation)
+        val subFabMenu = setupSubFabMenu(childFabs, orientation)
         setupOverlays()
-        setupMenu(childFabs, orientation)
-        setChildFabs()
+        setupMenu(position, mainFab, subFabMenu)
+
+        findViewById<View>(transparentOverlayId).visibility = GONE
+        findViewById<LinearLayout>(subFabMenuId).visibility = GONE
+
+        Timber.d("""
+            Done creating FabMenu with properties:
+                - Orientation: $orientation vs ${findViewById<LinearLayout>(subFabMenuId).orientation}
+                - Position: $position
+                - IconId: $mainIconId
+        """.trimIndent())
+    }
+
+    private fun setupMenu(position: Int, mainFab: FloatingActionButton, subFabMenu: LinearLayout) {
+        val menu = ConstraintLayout(context).apply {
+            layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                when(position) {
+                    BOTTOM_RIGHT_CORNER -> {
+                        bottomToBottom = LayoutParams.PARENT_ID
+                        endToEnd = LayoutParams.PARENT_ID
+                        setMargins(0, 0, defaultSpacing, defaultSpacing)
+                    }
+                    BOTTOM_LEFT_CORNER -> {
+                        bottomToBottom = LayoutParams.PARENT_ID
+                        startToStart = LayoutParams.PARENT_ID
+                        setMargins(defaultSpacing, 0, 0, defaultSpacing)
+                    }
+                    TOP_RIGHT_CORNER -> {
+                        topToTop = LayoutParams.PARENT_ID
+                        endToEnd = LayoutParams.PARENT_ID
+                        setMargins(0, defaultSpacing, defaultSpacing, 0)
+                    }
+                    TOP_LEFT_CORNER -> {
+                        topToTop = LayoutParams.PARENT_ID
+                        startToStart = LayoutParams.PARENT_ID
+                        setMargins(defaultSpacing, defaultSpacing, 0, 0)
+                    }
+                }
+                setPadding(defaultSpacing, defaultSpacing, defaultSpacing, defaultSpacing)
+            }
+            background = AppCompatResources.getDrawable(context, R.drawable.white_rounded_menu)
+        }
+
+        menu.addView(mainFab)
+        menu.addView(subFabMenu)
+        addView(menu)
     }
 
 
-    private fun setupMenu(childFabs: List<View>, orientation: Int) {
+    private fun setupSubFabMenu(childFabs: List<View>, subFabOrientation: Int) : LinearLayout {
         val menu = LinearLayout(context)
         menu.apply {
             layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-                when(orientation) {
+                when(subFabOrientation) {
                     TOP_TO_BOTTOM -> {
-                        topToBottom = main_fab_id
+                        topToBottom = mainFabId
                         menu.orientation = LinearLayout.VERTICAL
-                        startToStart = main_fab_id
-                        endToEnd = main_fab_id
+                        startToStart = mainFabId
+                        endToEnd = mainFabId
                     }
                     BOTTOM_TO_TOP -> {
-                        bottomToTop = main_fab_id
+                        bottomToTop = mainFabId
                         menu.orientation = LinearLayout.VERTICAL
-                        startToStart = main_fab_id
-                        endToEnd = main_fab_id
+                        startToStart = mainFabId
+                        endToEnd = mainFabId
                     }
                     LEFT_TO_RIGHT -> {
-                        startToEnd = main_fab_id
+                        startToEnd = mainFabId
                         menu.orientation = LinearLayout.HORIZONTAL
-                        topToTop = main_fab_id
-                        bottomToBottom = main_fab_id
+                        topToTop = mainFabId
+                        bottomToBottom = mainFabId
                     }
                     RIGHT_TO_LEFT -> {
-                        endToStart = main_fab_id
+                        endToStart = mainFabId
                         menu.orientation = LinearLayout.HORIZONTAL
-                        topToTop = main_fab_id
-                        bottomToBottom = main_fab_id
+                        topToTop = mainFabId
+                        bottomToBottom = mainFabId
                     }
                     BLOOM -> { // TODO
-                        bottomToTop = main_fab_id
+                        bottomToTop = mainFabId
                         menu.orientation = LinearLayout.VERTICAL
-                        startToStart = main_fab_id
-                        endToEnd = main_fab_id
+                        startToStart = mainFabId
+                        endToEnd = mainFabId
                         Snackbar.make(this@FabMenu, "Bloom orientation is not implemented yet", Snackbar.LENGTH_SHORT).show()
                     }
                 }
+                setMargins(0,0,0, defaultSpacing)
             }
-            if(orientation == TOP_TO_BOTTOM || orientation == BOTTOM_TO_TOP) {
-                this.orientation = LinearLayout.VERTICAL
-            } else if (orientation == LEFT_TO_RIGHT || orientation == RIGHT_TO_LEFT) {
-                this.orientation = LinearLayout.HORIZONTAL
-            }
-            id = menu_id
+            id = subFabMenuId
         }
 
         childFabs.forEach {
+            Timber.d("""
+                Settings for ${it.id}
+                - Keep custom icon color: TBD
+                - Dynamic margins       : TBD
+            """.trimIndent())
+
+            if (it is FloatingActionButton) {
+                it.backgroundTintList = secondaryColor
+                it.imageTintList = onSecondaryColor
+            }
+
+            // TODO make this depend on number of children, fill the space...
+            it.layoutParams = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                setMargins(0,0,0, resources.getDimension(R.dimen.default_padding).toInt())
+            }
+
             removeView(it)
             menu.addView(it)
         }
-        addView(menu)
+
+        return menu
     }
 
 
@@ -132,76 +191,46 @@ class FabMenu : ConstraintLayout {
                 topToTop = LayoutParams.PARENT_ID
                 bottomToBottom = LayoutParams.PARENT_ID
             }
-            setBackgroundColor(Color.argb(128,255,0,255))
-
-            id = overlay_id
+            setBackgroundColor(Color.argb(128,255,0,255)) //FIXME: Change color to white?
+            id = transparentOverlayId
+        }
+        transparentOverlay.setOnClickListener {
+            findViewById<FloatingActionButton>(mainFabId).performLongClick()
         }
         addView(transparentOverlay)
     }
 
-    private fun setChildFabs() {
-        findViewById<LinearLayout>(menu_id).children.forEach {
-            if (it is FloatingActionButton) {
-                it.backgroundTintList = secondaryColor
-                it.imageTintList = onSecondaryColor
-            }
-
-            // TODO make this depend on number of children, fill the space...
-            it.layoutParams = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-                //px, not dp
-                this.setMargins(resources.getDimension(R.dimen.default_padding).toInt())
-            }
-        }
-    }
 
 
-    private fun setupMainFab(mainIconId: Int, position: Int, orientation: Int) {
+    private fun setupMainFab(mainIconId: Int, position: Int, orientation: Int) : FloatingActionButton {
         mainFab.apply {
-            layoutParams = setMainFabLayoutParams(position)
+            layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                if (position == BOTTOM_LEFT_CORNER || position == BOTTOM_RIGHT_CORNER) {
+                    bottomToBottom = LayoutParams.PARENT_ID
+                } else {
+                    topToTop = LayoutParams.PARENT_ID
+                }
+            }
             size = FloatingActionButton.SIZE_NORMAL // TODO: might need to change this size?
             // TODO set color, icon
             backgroundTintList = primaryColor
             imageTintList = onPrimaryColor
             setImageDrawable(AppCompatResources.getDrawable(context, mainIconId))
 
-            id = main_fab_id
+            id = mainFabId
         }
 
         setMainButtonAnimation()
-        mainFab.setOnClickListener {
-            findViewById<LinearLayout>(menu_id).children.forEach {
-                it.visibility = if(it.visibility == GONE) VISIBLE else GONE
-            }
-            findViewById<View>(overlay_id).apply {
+        mainFab.setOnLongClickListener {
+            findViewById<LinearLayout>(subFabMenuId).apply {
                 visibility = if(this.visibility == GONE) VISIBLE else GONE
             }
-        }
-
-        addView(mainFab)
-    }
-
-    private fun setMainFabLayoutParams(position: Int): LayoutParams {
-        return LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-            when(position) {
-                BOTTOM_LEFT_CORNER -> {
-                    bottomToBottom = LayoutParams.PARENT_ID
-                    startToStart = LayoutParams.PARENT_ID
-                }
-                BOTTOM_RIGHT_CORNER -> {
-                    bottomToBottom = LayoutParams.PARENT_ID
-                    endToEnd = LayoutParams.PARENT_ID
-                }
-                TOP_LEFT_CORNER -> {
-                    topToTop = LayoutParams.PARENT_ID
-                    startToStart = LayoutParams.PARENT_ID
-                }
-                TOP_RIGHT_CORNER -> {
-                    topToTop = LayoutParams.PARENT_ID
-                    endToEnd = LayoutParams.PARENT_ID
-                }
+            findViewById<View>(transparentOverlayId).apply {
+                visibility = if(this.visibility == GONE) VISIBLE else GONE
             }
+            true
         }
-
+        return mainFab
     }
 
     private fun setMainButtonAnimation() {
@@ -239,15 +268,7 @@ class FabMenu : ConstraintLayout {
             val child = getChildAt(i)
 
             if (isInEditMode) {
-
-//                val orientation = attributeSourceResourceMap[R.styleable.FabMenu_orientation] ?: BOTTOM_TO_TOP
-//                val position = attributeSourceResourceMap[R.styleable.FabMenu_position] ?: BOTTOM_RIGHT_CORNER
-//
-//                val mainIconId = attributeSourceResourceMap[R.styleable.FabMenu_fab_icon] ?: R.drawable.baseline_fiber_manual_record_24
                 child.visibility = View.VISIBLE
-
-//                setupMainFab(mainIconId, position, orientation)
-//                setupMenu(orientation)
             }
         }
         super.onLayout(sizeChanged, left, top, right, bottom)
