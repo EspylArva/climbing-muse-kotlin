@@ -42,6 +42,7 @@
     <string name="recording">Recording video</string>
     <string name="chip_recording">Recording</string>
     <string name="enable_cv">Enabling analysis</string>
+    <string name="inference_chip">Inference: %1$s</string>
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>

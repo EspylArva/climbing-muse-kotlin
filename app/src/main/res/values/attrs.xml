@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- See https://github.com/Clans/FloatingActionButton/blob/master/library/src/main/res/values/attrs.xml for inspiration-->
     <declare-styleable name="FabMenu">
-        <!-- See https://github.com/Clans/FloatingActionButton/blob/master/library/src/main/res/values/attrs.xml for inspiration-->
+        <!-- The main FloatingActionButton icon -->
         <attr name="fab_icon" format="reference"/>
+        <!-- This is WIP -->
         <attr name="show_label" format="boolean"/>
+
+        <!-- This is WIP -->
         <attr name="shape" format="enum">
             <enum name="normal" value="0"/>
             <enum name="round" value="1"/>
@@ -26,10 +30,17 @@
             <enum name="topRightCorner" value="13"/>
         </attr>
 
+        <!-- The transparency value for the full-screen overlay. Value should be between 0 and 255. -->
         <attr name="veil_alpha" format="float"/>
+        <!-- The tint for the full-screen overlay. -->
         <attr name="veil_tint" format="reference"/>
+        <!-- The transparency value for the FloatingActionButton menu. Value should be between 0 and 255. -->
         <attr name="menu_overlay_alpha" format="float"/>
+        <!-- The tint for the FloatingActionButton menu. -->
         <attr name="menu_overlay_tint" format="reference"/>
+    </declare-styleable>
+    <declare-styleable name="FloatingActionButton">
+        <attr name="label" format="string"/>
     </declare-styleable>
 
 </resources>

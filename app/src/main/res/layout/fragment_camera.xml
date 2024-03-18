@@ -75,6 +75,8 @@
         app:orientation="bottomToTop"
         app:veil_alpha="100"
         app:veil_tint="@color/md_theme_light_primaryContainer"
+        app:menu_overlay_alpha="255"
+        app:menu_overlay_tint="@color/md_theme_light_primaryContainer"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,21 +87,25 @@
             android:id="@+id/fab_toggle_cv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:tag="Toggle Computer Vision"
             app:srcCompat="@drawable/baseline_auto_fix_high_24"/>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_toggle_record"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_baseline_photo_camera_24"/>
+            android:tag="Toggle Camera Recording"
+            app:srcCompat="@drawable/ic_baseline_photo_camera_front_24"/>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_toggle_inference_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_baseline_drive_file_move_24"/>
+            android:tag="Toggle Inference Time Chip"
+            app:srcCompat="@drawable/baseline_timer_24"/>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_toggle_chips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_dashboard_black_24dp"/>
+            android:tag="Toggle Chips"
+            app:srcCompat="@drawable/ic_baseline_toggle_off_24"/>
     </com.iteration.climbingmuse.ui.FabMenu>
 </androidx.constraintlayout.widget.ConstraintLayout>

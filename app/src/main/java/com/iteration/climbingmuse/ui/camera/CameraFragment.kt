@@ -311,7 +311,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     RunningMode.LIVE_STREAM
                 )
 
-                binding.chipInference.text = "Inference: ${resultBundle.inferenceTime}"
+                binding.chipInference.text = resources.getString(R.string.inference_chip, resultBundle.inferenceTime.toString().padStart(3, '0'))
 
                 // Force a redraw
                 binding.overlay.invalidate()
