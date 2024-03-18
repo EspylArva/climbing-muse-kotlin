@@ -13,6 +13,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.blue
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.core.view.children
@@ -22,9 +23,15 @@ import com.google.android.material.textview.MaterialTextView
 import com.iteration.climbingmuse.R
 import timber.log.Timber
 
+
 // This is based on LinearLayout: https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/core/java/android/widget/LinearLayout.java
 // and inspired by FloatingActionButton by Clans: https://github.com/Clans/FloatingActionButton/tree/master
-class FabMenu : ConstraintLayout {
+class FabMenu @RequiresApi(Build.VERSION_CODES.Q) @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var orientation: Int
     private var position: Int
@@ -56,12 +63,9 @@ class FabMenu : ConstraintLayout {
     private val onSecondaryColor = ResourcesCompat.getColorStateList(resources, R.color.md_theme_light_onSecondary, context.theme)
 
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    @JvmOverloads
-    constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0) : super(context, attrs, defStyleAttr) {
+    init {
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.FabMenu, defStyleAttr, defStyleRes)
         saveAttributeDataForStyleable(context, R.styleable.FabMenu, attrs, attributes, defStyleAttr, defStyleRes)
-
         orientation = attributes.getInt(R.styleable.FabMenu_orientation, 0)
         position = attributes.getInt(R.styleable.FabMenu_position, 0)
         mainIconId = attributes.getResourceId(R.styleable.FabMenu_fab_icon, R.drawable.baseline_fiber_manual_record_24)
@@ -69,7 +73,6 @@ class FabMenu : ConstraintLayout {
         veilTint = attributes.getResourceId(R.styleable.FabMenu_veil_tint, R.color.white)
         menuAlpha = attributes.getResourceId(R.styleable.FabMenu_menu_overlay_alpha, 100)
         menuTint = attributes.getResourceId(R.styleable.FabMenu_menu_overlay_tint, R.color.white)
-
     }
 
     override fun onFinishInflate() {
@@ -142,10 +145,13 @@ class FabMenu : ConstraintLayout {
     }
 
     private fun setMenuBackground() {
-        val menuColor = resources.getColor(menuTint, context.theme)
+        val unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.rounded_corners)
+        val wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable!!)
+        val menuColor = Color.argb(veilAlpha, menuTint.red, menuTint.green, menuTint.blue)
+        DrawableCompat.setTint(wrappedDrawable, menuColor)
+
         fabMenu.apply {
-            setBackgroundColor(Color.argb(menuAlpha,menuColor.red, menuColor.green, menuColor.blue))
-            background = AppCompatResources.getDrawable(context, R.drawable.rounded_corners)
+            this.background = wrappedDrawable
         }
     }
 
@@ -242,7 +248,6 @@ class FabMenu : ConstraintLayout {
                 bottomMargin = defaultSpacing
                 rowSpec = GridLayout.spec(rowIndex)
                 columnSpec = GridLayout.spec(colIndex)
-                setMargins(defaultSpacing, defaultSpacing, defaultSpacing, defaultSpacing)
             }
         })
         if(subFab.tag != "") {
@@ -292,8 +297,6 @@ class FabMenu : ConstraintLayout {
                     TOP_LEFT_CORNER -> { topToTop = LayoutParams.PARENT_ID ; startToStart = LayoutParams.PARENT_ID }
                     TOP_RIGHT_CORNER -> { topToTop = LayoutParams.PARENT_ID ; endToEnd = LayoutParams.PARENT_ID }
                 }
-
-                setMargins(defaultSpacing,defaultSpacing,defaultSpacing, defaultSpacing)
             }
             size = FloatingActionButton.SIZE_NORMAL // TODO: might need to change this size?
             backgroundTintList = primaryColor
@@ -303,7 +306,6 @@ class FabMenu : ConstraintLayout {
             id = mainFabId
         }
 
-        setMainButtonAnimation()
         mainFab.setOnLongClickListener {
             subFabMenu.apply {
                 visibility = if(this.visibility == GONE) VISIBLE else GONE
@@ -312,33 +314,10 @@ class FabMenu : ConstraintLayout {
                 visibility = if(this.visibility == GONE) VISIBLE else GONE
             }
 
+
             true
         }
         return mainFab
-    }
-
-    private fun setMainButtonAnimation() {
-        val collapseAngle: Float
-        val expandAngle: Float
-//        if (mOpenDirection == OPEN_UP) {
-//            collapseAngle = if (mLabelsPosition == LABELS_POSITION_LEFT) OPENED_PLUS_ROTATION_LEFT else OPENED_PLUS_ROTATION_RIGHT
-//            expandAngle = if (mLabelsPosition == LABELS_POSITION_LEFT) OPENED_PLUS_ROTATION_LEFT else OPENED_PLUS_ROTATION_RIGHT
-//        } else {
-//            collapseAngle = if (mLabelsPosition == LABELS_POSITION_LEFT) OPENED_PLUS_ROTATION_RIGHT else OPENED_PLUS_ROTATION_LEFT
-//            expandAngle = if (mLabelsPosition == LABELS_POSITION_LEFT) OPENED_PLUS_ROTATION_RIGHT else OPENED_PLUS_ROTATION_LEFT
-//        }
-
-//        val collapseAnimator = ObjectAnimator.ofFloat(mImageToggle, "rotation", collapseAngle, CLOSED_PLUS_ROTATION)
-//        val expandAnimator = ObjectAnimator.ofFloat(mImageToggle, "rotation", CLOSED_PLUS_ROTATION, expandAngle)
-//
-//        mOpenAnimatorSet.play(expandAnimator)
-//        mCloseAnimatorSet.play(collapseAnimator)
-//
-//        mOpenAnimatorSet.setInterpolator(mOpenInterpolator)
-//        mCloseAnimatorSet.setInterpolator(mCloseInterpolator)
-//
-//        mOpenAnimatorSet.setDuration(ANIMATION_DURATION)
-//        mCloseAnimatorSet.setDuration(ANIMATION_DURATION)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -359,15 +338,6 @@ class FabMenu : ConstraintLayout {
 
 
     companion object {
-        private const val OPENED_PLUS_ROTATION_LEFT = -90f - 45f
-        private const val OPENED_PLUS_ROTATION_RIGHT = 90f + 45f
-        private const val CLOSED_PLUS_ROTATION = 0f
-        private const val ANIMATION_DURATION = 300
-        private const val OPEN_UP = 0
-        private const val OPEN_DOWN = 1
-        private const val LABELS_POSITION_LEFT = 0
-        private const val LABELS_POSITION_RIGHT = 1
-
 
         private const val BOTTOM_TO_TOP         = 0
         private const val TOP_TO_BOTTOM         = 1
