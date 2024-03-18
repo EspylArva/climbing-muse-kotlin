@@ -283,7 +283,7 @@ class FabMenu @RequiresApi(Build.VERSION_CODES.Q) @JvmOverloads constructor(
             id = veilId
         }
         veil.setOnClickListener {
-            mainFab.performLongClick()
+            mainFab.callOnClick()
         }
         addView(veil)
     }
@@ -301,21 +301,19 @@ class FabMenu @RequiresApi(Build.VERSION_CODES.Q) @JvmOverloads constructor(
             size = FloatingActionButton.SIZE_NORMAL // TODO: might need to change this size?
             backgroundTintList = primaryColor
             imageTintList = onPrimaryColor
+
             setImageDrawable(AppCompatResources.getDrawable(context, mainIconId))
 
             id = mainFabId
         }
 
-        mainFab.setOnLongClickListener {
+        mainFab.setOnClickListener {
             subFabMenu.apply {
                 visibility = if(this.visibility == GONE) VISIBLE else GONE
             }
             veil.apply {
                 visibility = if(this.visibility == GONE) VISIBLE else GONE
             }
-
-
-            true
         }
         return mainFab
     }

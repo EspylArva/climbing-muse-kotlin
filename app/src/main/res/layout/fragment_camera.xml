@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        app:fab_icon="@drawable/ic_notifications_black_24dp"
+        app:fab_icon="@drawable/ic_baseline_add_24"
         app:position="bottomRightCorner"
         app:orientation="bottomToTop"
         app:veil_alpha="100"
