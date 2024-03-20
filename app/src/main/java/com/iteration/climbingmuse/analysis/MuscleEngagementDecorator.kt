@@ -1,5 +1,6 @@
 package com.iteration.climbingmuse.analysis
 
+import android.graphics.Color
 import android.graphics.Paint
 import androidx.lifecycle.MutableLiveData
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
@@ -23,18 +24,15 @@ class MuscleEngagementDecorator(
             return
         }
 
-        for(landmark in data.landmarks()) {
-            for (normalizedLandmark in landmark) {
-                PoseLandmarker.POSE_LANDMARKS.forEach {
-                    lines.add(ComputerVisionDecorator.CanvasLineInfo(
-                        data.landmarks()[0][it!!.start()].x(),
-                        data.landmarks()[0][it.start()].y(),
-                        data.landmarks()[0][it.end()].x(),
-                        data.landmarks()[0][it.end()].y(),
-                        paint // TODO: no color, require context : paint.color = ContextCompat.getColor(context!!, R.color.mp_color_primary)
-                    ))
-                }
-            }
+        if (data.landmarks().size == 0) return
+        PoseLandmarker.POSE_LANDMARKS.forEach {
+            lines.add(ComputerVisionDecorator.CanvasLineInfo(
+                data.landmarks()[0][it!!.start()].x(),
+                data.landmarks()[0][it.start()].y(),
+                data.landmarks()[0][it.end()].x(),
+                data.landmarks()[0][it.end()].y(),
+                paint // TODO: no color, require context : paint.color = ContextCompat.getColor(context!!, R.color.mp_color_primary)
+            ))
         }
 
     }
