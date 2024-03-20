@@ -7,7 +7,7 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
 class JointDecorator(val showJointMarkers: MutableLiveData<Boolean>) : ComputerVisionDecorator {
 
-    val jointPaint = Paint().apply {
+    private val jointPaint = Paint().apply {
         color = Color.YELLOW
         strokeWidth = 12F
         style = Paint.Style.FILL
