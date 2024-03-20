@@ -5,7 +5,7 @@ import android.graphics.Paint
 import androidx.lifecycle.MutableLiveData
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
-class JointDecorator(val showJointMarkers: MutableLiveData<Boolean>) : ComputerVisionDecorator {
+class JointDecorator(private val showJointMarkers: MutableLiveData<Boolean>) : ComputerVisionDecorator {
 
     private val jointPaint = Paint().apply {
         color = Color.YELLOW

@@ -7,8 +7,8 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
 class MuscleEngagementDecorator(
-    val showMuscleMarkers: MutableLiveData<Boolean>,
-    val showMuscleEngagement: MutableLiveData<Boolean> //TODO Implement this function
+    private val showMuscleMarkers: MutableLiveData<Boolean>,
+    private val showMuscleEngagement: MutableLiveData<Boolean>
 ) : ComputerVisionDecorator {
 
     private val paint = Paint().apply {
@@ -26,8 +26,8 @@ class MuscleEngagementDecorator(
 
         if (data.landmarks().size == 0) return
         PoseLandmarker.POSE_LANDMARKS.forEach {
-            val isShoulder = (it.start() == VideoProcessor.Joint.RIGHT_SHOULDER.mpId || it.start() == VideoProcessor.Joint.LEFT_SHOULDER.mpId) ||
-                    (it.end() == VideoProcessor.Joint.RIGHT_SHOULDER.mpId || it.end() == VideoProcessor.Joint.LEFT_SHOULDER.mpId)
+            val isShoulder = (it.start() == VideoProcessor.MediaPipeJoint.RIGHT_SHOULDER || it.start() == VideoProcessor.MediaPipeJoint.LEFT_SHOULDER) ||
+                    (it.end() == VideoProcessor.MediaPipeJoint.RIGHT_SHOULDER || it.end() == VideoProcessor.MediaPipeJoint.LEFT_SHOULDER)
             lines.add(ComputerVisionDecorator.CanvasLineInfo(
                 data.landmarks()[0][it!!.start()].x(),
                 data.landmarks()[0][it.start()].y(),

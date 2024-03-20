@@ -8,9 +8,9 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import kotlin.math.abs
 
 class GravityCenterDecorator(
-    val showCOGMarker: MutableLiveData<Boolean>,
-    val showCOGTrail: MutableLiveData<Boolean>, // TODO implement this function
-    val showBalanceMarker: MutableLiveData<Boolean>
+    private val showCOGMarker: MutableLiveData<Boolean>,
+    private val showCOGTrail: MutableLiveData<Boolean>, // TODO implement this function
+    private val showBalanceMarker: MutableLiveData<Boolean>
 ) : ComputerVisionDecorator {
     private val cogPaint = Paint().apply {
         color = Color.YELLOW
@@ -46,8 +46,8 @@ class GravityCenterDecorator(
     }
 
     private fun addBalanceMarker(cog: NormalizedLandmark, poi: List<NormalizedLandmark>) {
-        val lAnkle = poi[VideoProcessor.Joint.LEFT_ANKLE.mpId]
-        val rAnkle = poi[VideoProcessor.Joint.RIGHT_ANKLE.mpId]
+        val lAnkle = poi[VideoProcessor.MediaPipeJoint.LEFT_ANKLE]
+        val rAnkle = poi[VideoProcessor.MediaPipeJoint.RIGHT_ANKLE]
 
         val balancePaint = Paint().apply {
             color = if (lAnkle.x() <= cog.x() && cog.x() <= rAnkle.x() || rAnkle.x() <= cog.x() && cog.x() <= lAnkle.x())
@@ -74,15 +74,15 @@ class GravityCenterDecorator(
 
     private fun processCOG(poi: List<NormalizedLandmark>) : NormalizedLandmark {
         // Center of Gravity (CoG) is situated around the belly button, which should be 1/4 of the trunk above the hips
-        val lShoulder = poi[VideoProcessor.Joint.LEFT_SHOULDER.mpId]
-        val rShoulder = poi[VideoProcessor.Joint.RIGHT_SHOULDER.mpId]
+        val lShoulder = poi[VideoProcessor.MediaPipeJoint.LEFT_SHOULDER]
+        val rShoulder = poi[VideoProcessor.MediaPipeJoint.RIGHT_SHOULDER]
         val neck = NormalizedLandmark.create(
             abs(lShoulder.x() + rShoulder.x())/2,
             abs(lShoulder.y() + rShoulder.y())/2,
             abs(lShoulder.z() + rShoulder.z())/2
         )
-        val lHip = poi[VideoProcessor.Joint.LEFT_HIP.mpId]
-        val rHip = poi[VideoProcessor.Joint.RIGHT_HIP.mpId]
+        val lHip = poi[VideoProcessor.MediaPipeJoint.LEFT_HIP]
+        val rHip = poi[VideoProcessor.MediaPipeJoint.RIGHT_HIP]
         val crotch = NormalizedLandmark.create(
             abs(lHip.x() + rHip.x())/2,
             abs(lHip.y() + rHip.y())/2,
