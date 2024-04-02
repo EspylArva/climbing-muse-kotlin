@@ -1,11 +1,14 @@
 package com.iteration.climbingmuse.ui.camera
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
@@ -19,9 +22,12 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.util.Consumer
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
@@ -36,24 +42,38 @@ import com.iteration.climbingmuse.databinding.FragmentCameraBinding
 import com.iteration.climbingmuse.ui.MaterialViewHelper
 import com.iteration.climbingmuse.ui.settings.SettingsViewModel
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
-    private val videoProcessor: VideoProcessor = VideoProcessor()
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
     private val viewModel: SettingsViewModel by activityViewModels()
 
     private lateinit var backgroundExecutor: ExecutorService
-    private var imageAnalyzer: ImageAnalysis? = null
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
 
-    private lateinit var preview: Preview
-    private var cameraProvider: ProcessCameraProvider? = null
-    private var camera: Camera? = null
+    // Interface for Computer Vision processing
+    private val videoProcessor: VideoProcessor = VideoProcessor()
 
+    /// CameraX
+    // Camera
+    private var camera: Camera? = null
+    private var cameraProvider: ProcessCameraProvider? = null
+    // Preview for the camera
+    private lateinit var preview: Preview
+    // CameraX use cases
+    private var imageAnalyzer: ImageAnalysis? = null
+    private var videoCapturer: VideoCapture<Recorder>? = null
+
+    val qualitySelector = QualitySelector.fromOrderedList(
+        listOf(Quality.UHD, Quality.FHD, Quality.HD, Quality.SD),
+        FallbackStrategy.lowerQualityOrHigherThan(Quality.SD))
+    private var recording: Recording? = null
+    ///
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,15 +108,14 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         }
 
         binding.fabToggleRecord.setOnClickListener {
-            // TODO This bool should be equal to "isRecording"
-            val isRecording = binding.chipRecording.visibility == View.VISIBLE
-            if(isRecording) {
+            if(recording != null) {
                 // Stop recording
+                recording!!.stop()
                 binding.chipRecording.visibility = View.GONE
             } else {
                 // Start recording
+                recordVideo()
                 binding.chipRecording.visibility = View.VISIBLE
-                Snackbar.make(binding.root, resources.getString(R.string.recording), Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -225,7 +244,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
             .setTargetRotation(binding.liveFeed.display.rotation)
             .build()
 
-        val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build() //TODO allow LENS_FACING_FRONT
+        val cameraSelector = CameraSelector.Builder().requireLensFacing(viewModel.cameraSelection.value!!).build()
 
         // Attach the viewfinder's surface provider to preview use case
         preview.setSurfaceProvider(binding.liveFeed.surfaceProvider)
@@ -249,7 +268,16 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     }
                 }
 
-        val useCases = arrayOf(preview, imageAnalyzer) // TODO reintroduce imageAnalyzer (add imageAnalyzer to varargs)
+        val recorder = Recorder.Builder()
+            .setExecutor(backgroundExecutor)
+            .setQualitySelector(qualitySelector)
+            .build()
+        videoCapturer = VideoCapture.withOutput(recorder)
+//        videoCapturer = VideoCapture.Builder(recorder)
+//            .setMirrorMode(MIRROR_MODE_ON_FRONT_ONLY) // FIXME: This requires CameraX 1.3, which in turn requires SDK 34
+//            .build()
+
+        val useCases = arrayOf(preview, imageAnalyzer, videoCapturer)
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll()
 
@@ -261,8 +289,57 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         if(this::poseLandmarkerHelper.isInitialized) {
             poseLandmarkerHelper.detectLiveStream(
                 imageProxy = imageProxy,
-                isFrontCamera = false // cameraFacing == CameraSelector.LENS_FACING_FRONT
+                isFrontCamera = viewModel.cameraSelection.value == CameraSelector.LENS_FACING_FRONT
             )
+        }
+    }
+
+    private fun recordVideo() {
+        // Create MediaStoreOutputOptions for our recorder
+        val timestamp = SimpleDateFormat("ddMMMyy_HH:mm:ss", Locale.getDefault()).format(System.currentTimeMillis())
+        val name = "ClimbingMuse_$timestamp.mp4"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Video.Media.DISPLAY_NAME, name)
+        }
+        val mediaStoreOutput = MediaStoreOutputOptions.Builder(requireContext().contentResolver,
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+            .setContentValues(contentValues)
+            .build()
+
+        // Configure Recorder and Start recording to the mediaStoreOutput.
+        val recordingPermission = if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            Timber.d("Recording - No permission")
+            return
+        } else {
+
+            val captureListener = Consumer<VideoRecordEvent> { event ->
+                when(event) {
+                    is VideoRecordEvent.Start -> {
+                        Snackbar.make(binding.root, "Recording started", Snackbar.LENGTH_SHORT).show()
+                    }
+                    is VideoRecordEvent.Finalize -> {
+                        Snackbar.make(binding.root, "Recording stopped. Saving $name", Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+
+            Timber.d("Start recording - file is $name")
+            recording = videoCapturer?.output
+                ?.prepareRecording(requireContext(), mediaStoreOutput)
+                ?.withAudioEnabled()
+                ?.start(ContextCompat.getMainExecutor(requireContext()), captureListener)
         }
     }
 

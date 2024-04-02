@@ -1,5 +1,6 @@
 package com.iteration.climbingmuse.ui.settings
 
+import androidx.camera.core.CameraSelector
 import androidx.databinding.Bindable
 import androidx.databinding.InverseMethod
 import androidx.databinding.Observable
@@ -17,9 +18,10 @@ import timber.log.Timber
 
 class SettingsViewModel : ViewModel(), Observable {
 
+    /// Computer Vision settings
+    // MediaPipe model used
     @Bindable
     val model = MutableLiveData<String>()
-
     // Angle options
     @Bindable
     val showAngles = MutableLiveData<Boolean>()
@@ -38,9 +40,15 @@ class SettingsViewModel : ViewModel(), Observable {
     val showMuscleMarkers = MutableLiveData<Boolean>()
     @Bindable
     val showMuscleEngagement = MutableLiveData<Boolean>()
-    init {
-        model.postValue(MODEL_POSE_LANDMARKER_FULL)
+    ///
 
+    /// Camera settings
+    val cameraSelection = MutableLiveData<Int>()
+    ///
+
+    init {
+        /// Computer Vision settings
+        model.postValue(MODEL_POSE_LANDMARKER_FULL)
         showAngles.postValue(true)
         showCOGTrail.postValue(true)
         showCOGMarker.postValue(false)
@@ -49,7 +57,10 @@ class SettingsViewModel : ViewModel(), Observable {
         showMuscleMarkers.postValue(true)
         showMuscleEngagement.postValue(true)
 
+        /// Camera settings
+        cameraSelection.postValue(CameraSelector.LENS_FACING_BACK)
     }
+
 
     private var _delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
     private var _minPoseDetectionConfidence: Float = PoseLandmarkerHelper.DEFAULT_POSE_DETECTION_CONFIDENCE
