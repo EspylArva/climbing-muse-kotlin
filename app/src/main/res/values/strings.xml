@@ -11,6 +11,9 @@
     <!-- Snackbar content -->
     <string name="permission_denied">Permission denied</string>
     <string name="permission_granted">Permission granted</string>
+    <string name="recording_started">Recording video</string>
+    <string name="recording_finished">Video saved. File name: %1$s</string>
+    <string name="enable_cv">Enabling analysis</string>
 
     <!-- Dynamic textview content. Used to explain why permission is required -->
     <string name="camera_permission_justification">
@@ -39,10 +42,11 @@
     <string name="cv_settings_show_trail">Show trail</string>
     <string name="cv_settings_center_of_gravity">Center of Gravity</string>
     <string name="cv_settings_angles">Angles</string>
-    <string name="recording">Recording video</string>
+
+
     <string name="chip_recording">Recording</string>
-    <string name="enable_cv">Enabling analysis</string>
-    <string name="inference_chip">Inference: %1$s</string>
+    <string name="chip_inference">Inference: %1$s</string>
+    <string name="chip_cv">CV enabled</string>
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>

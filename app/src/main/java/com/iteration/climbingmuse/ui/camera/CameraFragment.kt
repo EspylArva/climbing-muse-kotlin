@@ -8,13 +8,13 @@ import android.content.res.Configuration
 import android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
-import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -31,7 +31,6 @@ import androidx.core.util.Consumer
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
-import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
@@ -39,7 +38,6 @@ import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentCameraBinding
-import com.iteration.climbingmuse.ui.MaterialViewHelper
 import com.iteration.climbingmuse.ui.settings.SettingsViewModel
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -94,6 +92,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun setFabButtonsListeners() {
         binding.fabToggleCv.setOnClickListener {
             val cvEnabled = binding.chipCv.visibility == View.VISIBLE
@@ -294,12 +293,14 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun recordVideo() {
         // Create MediaStoreOutputOptions for our recorder
         val timestamp = SimpleDateFormat("ddMMMyy_HH:mm:ss", Locale.getDefault()).format(System.currentTimeMillis())
         val name = "ClimbingMuse_$timestamp.mp4"
         val contentValues = ContentValues().apply {
             put(MediaStore.Video.Media.DISPLAY_NAME, name)
+            put(MediaStore.Video.Media.RELATIVE_PATH, "${Environment.DIRECTORY_MOVIES}/${resources.getString(R.string.app_name)}")
         }
         val mediaStoreOutput = MediaStoreOutputOptions.Builder(requireContext().contentResolver,
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
@@ -326,10 +327,10 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
             val captureListener = Consumer<VideoRecordEvent> { event ->
                 when(event) {
                     is VideoRecordEvent.Start -> {
-                        Snackbar.make(binding.root, "Recording started", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root, resources.getString(R.string.recording_started), Snackbar.LENGTH_SHORT).show()
                     }
                     is VideoRecordEvent.Finalize -> {
-                        Snackbar.make(binding.root, "Recording stopped. Saving $name", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root, resources.getString(R.string.recording_started).format(name), Snackbar.LENGTH_SHORT).show()
                     }
                 }
 
@@ -388,7 +389,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     RunningMode.LIVE_STREAM
                 )
 
-                binding.chipInference.text = resources.getString(R.string.inference_chip, resultBundle.inferenceTime.toString().padStart(3, '0'))
+                binding.chipInference.text = resources.getString(R.string.chip_inference, resultBundle.inferenceTime.toString().padStart(3, '0'))
 
                 // Force a redraw
                 binding.overlay.invalidate()
