@@ -14,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -27,6 +26,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.util.Consumer
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -40,6 +40,7 @@ import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentCameraBinding
 import com.iteration.climbingmuse.ui.settings.SettingsViewModel
 import timber.log.Timber
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -88,11 +89,8 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
         setFabButtonsListeners()
-
-
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun setFabButtonsListeners() {
         binding.fabToggleCv.setOnClickListener {
             val cvEnabled = binding.chipCv.visibility == View.VISIBLE
@@ -293,14 +291,17 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun recordVideo() {
         // Create MediaStoreOutputOptions for our recorder
         val timestamp = SimpleDateFormat("ddMMMyy_HH:mm:ss", Locale.getDefault()).format(System.currentTimeMillis())
-        val name = "ClimbingMuse_$timestamp.mp4"
+        val filename = "ClimbingMuse_$timestamp"
+        val appDir = "${Environment.DIRECTORY_MOVIES}/${resources.getString(R.string.app_name)}"
         val contentValues = ContentValues().apply {
-            put(MediaStore.Video.Media.DISPLAY_NAME, name)
-            put(MediaStore.Video.Media.RELATIVE_PATH, "${Environment.DIRECTORY_MOVIES}/${resources.getString(R.string.app_name)}")
+            put(MediaStore.Video.Media.DISPLAY_NAME, filename)
+            put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.Video.Media.RELATIVE_PATH, appDir)
+            }
         }
         val mediaStoreOutput = MediaStoreOutputOptions.Builder(requireContext().contentResolver,
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
@@ -308,40 +309,33 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
             .build()
 
         // Configure Recorder and Start recording to the mediaStoreOutput.
-        val recordingPermission = if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            Timber.d("Recording - No permission")
-            return
-        } else {
 
-            val captureListener = Consumer<VideoRecordEvent> { event ->
-                when(event) {
-                    is VideoRecordEvent.Start -> {
-                        Snackbar.make(binding.root, resources.getString(R.string.recording_started), Snackbar.LENGTH_SHORT).show()
-                    }
-                    is VideoRecordEvent.Finalize -> {
-                        Snackbar.make(binding.root, resources.getString(R.string.recording_started).format(name), Snackbar.LENGTH_SHORT).show()
-                    }
+        val captureListener = Consumer<VideoRecordEvent> { event ->
+            when(event) {
+                is VideoRecordEvent.Start -> {
+                    Snackbar.make(binding.root, resources.getString(R.string.recording_started), Snackbar.LENGTH_SHORT).show()
                 }
-
+                is VideoRecordEvent.Finalize -> {
+                    Snackbar.make(binding.root, resources.getString(R.string.recording_started).format(filename), Snackbar.LENGTH_LONG)
+                        .setAction(R.string.action_delete) {
+                            requireContext().contentResolver.delete(mediaStoreOutput.collectionUri, null, null)
+                            Timber.d("Deleting ${mediaStoreOutput.collectionUri}")
+                        }
+                        .show()
+                }
             }
 
-            Timber.d("Start recording - file is $name")
-            recording = videoCapturer?.output
-                ?.prepareRecording(requireContext(), mediaStoreOutput)
-                ?.withAudioEnabled()
-                ?.start(ContextCompat.getMainExecutor(requireContext()), captureListener)
         }
+
+        Timber.d("Start recording - file is $filename")
+        recording = videoCapturer?.output
+            ?.prepareRecording(requireContext(), mediaStoreOutput)
+            ?.apply {
+                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    withAudioEnabled()
+                }
+            }
+            ?.start(ContextCompat.getMainExecutor(requireContext()), captureListener)
     }
 
     private fun displayExplanationView() {

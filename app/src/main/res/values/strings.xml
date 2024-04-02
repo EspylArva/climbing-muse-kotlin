@@ -47,6 +47,7 @@
     <string name="chip_recording">Recording</string>
     <string name="chip_inference">Inference: %1$s</string>
     <string name="chip_cv">CV enabled</string>
+    <string name="action_delete">Delete video</string>
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>
