@@ -25,9 +25,6 @@ class ComputerVisionSettingsFragment : Fragment() {
 
     private var _binding: FragmentComputerVisionSettingsBinding? = null
     private val vm: SettingsViewModel by activityViewModels()
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -38,18 +35,12 @@ class ComputerVisionSettingsFragment : Fragment() {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_computer_vision_settings, container, false)
         binding.lifecycleOwner = this;
         binding.viewmodel = vm
-        Timber.d("SettingsVM hash: %s", vm.hashCode())
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        setupDropdown(binding.menuModel)
         setupCheckboxes()
-    }
-
-    private fun setupDropdown(modelDropdown: MaterialAutoCompleteTextView) {
-        modelDropdown.setSimpleItems(R.array.models_spinner_titles)
     }
 
     @SuppressWarnings("unchecked")
