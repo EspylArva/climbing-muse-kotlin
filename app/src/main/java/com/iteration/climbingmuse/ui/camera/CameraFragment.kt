@@ -14,22 +14,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
+import androidx.camera.video.VideoCapture
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.util.Consumer
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.google.android.material.snackbar.Snackbar
 import com.google.mediapipe.tasks.vision.core.RunningMode
@@ -39,8 +35,8 @@ import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentCameraBinding
 import com.iteration.climbingmuse.ui.settings.SettingsViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -61,14 +57,13 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     /// CameraX
     // Camera
     private var camera: Camera? = null
-    private var cameraProvider: ProcessCameraProvider? = null
     // Preview for the camera
     private lateinit var preview: Preview
     // CameraX use cases
     private var imageAnalyzer: ImageAnalysis? = null
     private var videoCapturer: VideoCapture<Recorder>? = null
 
-    val qualitySelector = QualitySelector.fromOrderedList(
+    private val qualitySelector = QualitySelector.fromOrderedList(
         listOf(Quality.UHD, Quality.FHD, Quality.HD, Quality.SD),
         FallbackStrategy.lowerQualityOrHigherThan(Quality.SD))
     private var recording: Recording? = null
@@ -89,6 +84,15 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
         setFabButtonsListeners()
+
+        videoProcessor.decorators = arrayListOf(
+            AngleDecorator(viewModel.showAngles),
+            GravityCenterDecorator(viewModel.showCOGMarker, viewModel.showCOGTrail, viewModel.showBalanceMarker),
+            JointDecorator(viewModel.showJointMarkers),
+            MuscleEngagementDecorator(viewModel.showMuscleMarkers, viewModel.showMuscleEngagement)
+        )
+
+
     }
 
     private fun setFabButtonsListeners() {
@@ -160,15 +164,8 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     .navigate(R.id.action_navigation_camera_to_navigation_permissions)
             }
         } else {
-            videoProcessor.decorators = arrayListOf(
-                AngleDecorator(viewModel.showAngles),
-                GravityCenterDecorator(viewModel.showCOGMarker, viewModel.showCOGTrail, viewModel.showBalanceMarker),
-                JointDecorator(viewModel.showJointMarkers),
-                MuscleEngagementDecorator(viewModel.showMuscleMarkers, viewModel.showMuscleEngagement)
-            )
-
             // Wait for the views to be properly laid out
-            binding.liveFeed.post { setUpCamera() }
+            binding.liveFeed.post { lifecycleScope.launch { setUpCamera() } }
 
             // Create the PoseLandmarkerHelper that will handle the inference
             backgroundExecutor.execute {
@@ -186,10 +183,8 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
             // Start the PoseLandmarkerHelper again when users come back
             // to the foreground.
             backgroundExecutor.execute {
-                if (this::poseLandmarkerHelper.isInitialized) {
-                    if (poseLandmarkerHelper.isClose()) {
-                        poseLandmarkerHelper.setupPoseLandmarker()
-                    }
+                if (this::poseLandmarkerHelper.isInitialized && poseLandmarkerHelper.isClose()) {
+                    poseLandmarkerHelper.setupPoseLandmarker()
                 }
             }
         }
@@ -221,37 +216,29 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
 
     private fun setUpCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-        cameraProviderFuture.addListener(
-            {
+        cameraProviderFuture.addListener({
                 // CameraProvider
-                cameraProvider = cameraProviderFuture.get()
+                val cameraProvider = cameraProviderFuture.get()
+                val cameraSelector = CameraSelector.Builder().requireLensFacing(viewModel.cameraSelection.value!!).build()
 
                 // Build and bind the camera use cases
-                bindCameraUseCases()
+                bindCameraUseCases(cameraProvider, cameraSelector)
             }, ContextCompat.getMainExecutor(requireContext())
         )
     }
 
-    private fun bindCameraUseCases() {
-        binding.liveFeed.display ?: return
-
-        // Preview. Only using the 4:3 ratio because this is the closest to our models
+    private fun bindCameraUseCases(cameraProvider: ProcessCameraProvider, cameraSelector: CameraSelector) {
+        // # Preview. Only using the 4:3 ratio because this is the closest to our models
         preview = Preview.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .setTargetRotation(binding.liveFeed.display.rotation)
             .build()
+            .also {
+                // Attach the viewfinder's surface provider to preview use case
+                it.setSurfaceProvider(binding.liveFeed.surfaceProvider)
+            }
 
-        val cameraSelector = CameraSelector.Builder().requireLensFacing(viewModel.cameraSelection.value!!).build()
-
-        // Attach the viewfinder's surface provider to preview use case
-        preview.setSurfaceProvider(binding.liveFeed.surfaceProvider)
-
-
-        // CameraProvider
-        val cameraProvider = cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
-
-        // Use cases
-        // ImageAnalysis. Using RGBA 8888 to match how our models work
+        // # ImageAnalysis. Using RGBA 8888 to match how our models work
         imageAnalyzer =
             ImageAnalysis.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .setTargetRotation(binding.liveFeed.display.rotation)
@@ -265,8 +252,8 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     }
                 }
 
+        // # VideoCapture
         val recorder = Recorder.Builder()
-            .setExecutor(backgroundExecutor)
             .setQualitySelector(qualitySelector)
             .build()
         videoCapturer = VideoCapture.withOutput(recorder)
@@ -277,6 +264,10 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         val useCases = arrayOf(preview, imageAnalyzer, videoCapturer)
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll()
+
+        if(camera != null) {
+            camera!!.cameraInfo.cameraState.removeObservers(viewLifecycleOwner)
+        }
 
         // camera provides access to CameraControl & CameraInfo
         camera = cameraProvider.bindToLifecycle(this, cameraSelector, *useCases)
