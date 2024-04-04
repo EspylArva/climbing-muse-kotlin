@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -78,12 +79,27 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         return binding.root
     }
 
+    private val zoomListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val scale = camera!!.cameraInfo.zoomState.value!!.zoomRatio * detector.scaleFactor
+            camera!!.cameraControl.setZoomRatio(scale)
+            return true
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Init the background executor
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
         setFabButtonsListeners()
+
+        val scaleGestureDetector = ScaleGestureDetector(context, zoomListener)
+        binding.liveFeed.setOnTouchListener { v, event ->
+            v.performClick()
+            scaleGestureDetector.onTouchEvent(event)
+            return@setOnTouchListener true
+        }
 
         videoProcessor.decorators = arrayListOf(
             AngleDecorator(viewModel.showAngles),
