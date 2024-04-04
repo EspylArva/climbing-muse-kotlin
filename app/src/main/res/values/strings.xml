@@ -6,7 +6,12 @@
     <string name="title_camera">Camera</string>
     <string name="title_file_explorer">Explore local files</string>
     <string name="title_settings">Settings</string>
+    <string name="title_camera_settings">Camera Settings</string>>
     <string name="title_computer_vision_settings">Computer\nVision</string>
+    <string name="title_mediapipe_settings">MediaPipe</string>
+
+    <!-- SharedPreferences IDs -->
+    <string name="camera_permission_denied">Manifest.CAMERA permission</string>
 
     <!-- Snackbar content -->
     <string name="permission_denied">Permission denied</string>
@@ -14,25 +19,33 @@
     <string name="recording_started">Recording video</string>
     <string name="recording_finished">Video saved. File name: %1$s</string>
     <string name="enable_cv">Enabling analysis</string>
-
-    <!-- Dynamic textview content. Used to explain why permission is required -->
-    <string name="camera_permission_justification">
-        Camera permissions are required to analyse live feed, or to record a video.\n\nConsider grant this app permissions to use camera if you want to use this functionality.
-    </string>
-
     <!-- Button text -->
     <string name="button_give_permission">Give permission</string>
     <string name="button_refuse_permission">Refuse to give permission</string>
 
-    <!-- SharedPreferences IDs -->
-    <string name="camera_permission_denied">Manifest.CAMERA permission</string>
+    <!-- =============== -->
+    <!-- CAMERA FRAGMENT -->
+    <!-- =============== -->
+    <!-- Chips -->
+    <string name="chip_recording">Recording</string>
+    <string name="chip_inference">Inference: %1$s</string>
+    <string name="chip_cv">CV enabled</string>
+    <!-- Record Video Dialog -->
+    <string name="action_delete">Delete video</string>
+    <!-- Dynamic textview content. Used to explain why permission is required -->
+    <string name="camera_permission_justification">
+        Camera permissions are required to analyse live feed, or to record a video.\n\nConsider grant this app permissions to use camera if you want to use this functionality.
+    </string>
+    <!-- =============== -->
 
-    <!-- Settings content -->
+    <!-- ================= -->
+    <!-- SETTINGS FRAGMENT -->
+    <!-- ================= -->
+    <!-- Computer Vision Settings -->
     <string name="cv_settings_model">Model</string>
     <string name="cv_settings_presence_threshold">Presence Threshold</string>
     <string name="cv_settings_tracking_threshold">Tracking Threshold</string>
     <string name="cv_settings_detection_threshold">Detection Threshold</string>
-    <string name="cv_settings_warning">Warning: These options may have a high impact on the analysis functionality.\nOnly fine tune these options if you know what you are doing!</string>
     <string name="cv_settings_muscles">Muscles</string>
     <string name="cv_settings_show_muscle_markers">Show muscle markers</string>
     <string name="cv_settings_show_muscle_engagement">Show muscle engagement</string>
@@ -43,17 +56,17 @@
     <string name="cv_settings_center_of_gravity">Center of Gravity</string>
     <string name="cv_settings_angles">Angles</string>
 
+    <string name="cv_settings_warning">Markers displayed to provide analysis of your video</string>
 
-    <string name="chip_recording">Recording</string>
-    <string name="chip_inference">Inference: %1$s</string>
-    <string name="chip_cv">CV enabled</string>
-    <string name="action_delete">Delete video</string>
+    <!-- MediaPipe Settings -->
+    <string name="mediapipe_settings_warning">Warning: These options may have a high impact on the analysis functionality.\nOnly fine tune these options if you know what you are doing!</string>
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>
         <item>Pose Landmarker Lite</item>
         <item>Pose Landmarker Heavy</item>
     </string-array>
+    <!-- ================= -->
 
     <!-- Unclassified -->
 </resources>

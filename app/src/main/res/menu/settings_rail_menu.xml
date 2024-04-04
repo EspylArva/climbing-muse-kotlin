@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/navigation_camera_settings"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_photo_camera_24"
+        android:title="@string/title_camera_settings"/>
+
+    <item
         android:id="@+id/navigation_computer_vision_settings"
         android:enabled="true"
         android:icon="@drawable/baseline_auto_fix_high_24"
         android:title="@string/title_computer_vision_settings"/>
+
+    <item
+        android:id="@+id/navigation_mediapipe_settings"
+        android:enabled="true"
+        android:icon="@drawable/ic_mediapipe_icon"
+        android:title="@string/title_mediapipe_settings"/>
 </menu>
