@@ -10,8 +10,18 @@
     <string name="title_computer_vision_settings">Computer\nVision</string>
     <string name="title_mediapipe_settings">MediaPipe</string>
 
-    <!-- SharedPreferences IDs -->
+    <!-- SharedPreferences IDs. Use string@"app_name" for the SharedPreferences ID -->
     <string name="camera_permission_denied">Manifest.CAMERA permission</string>
+    <string name="sp_mediapipe_model">MediaPipe_Model</string>
+    <string name="sp_cv_showAngles">CV_showAngles</string>
+    <string name="sp_cv_showCogTrail">CV_showCogTrail</string>
+    <string name="sp_cv_showCogMarker">CV_showCogMarker</string>
+    <string name="sp_cv_showBalanceMarker">CV_showBalanceMarker</string>
+    <string name="sp_cv_showJoints">CV_showJoints</string>
+    <string name="sp_cv_showMusclesMarker">CV_showMusclesMarker</string>
+    <string name="sp_cv_showMuscleEngagement">CV_showMuscleEngagement</string>
+    <string name="sp_camera_cameraSelection">Camera_cameraSelection</string>
+
 
     <!-- Snackbar content -->
     <string name="permission_denied">Permission denied</string>

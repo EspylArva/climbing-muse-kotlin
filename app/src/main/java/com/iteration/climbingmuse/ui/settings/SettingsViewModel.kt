@@ -141,6 +141,15 @@ class SettingsViewModel : ViewModel(), Observable {
             }
 
         }
+class ComputerVisionViewModel {
+    companion object {
+        const val showAngles = true
+        const val showCOGTrail = true
+        const val showCOGMarker = false
+        const val showBalanceMarker = false
+        const val showJointMarkers = true
+        const val showMuscleMarkers = true
+        const val showMuscleEngagement = true
     }
 
     override fun toString(): String {
@@ -159,5 +168,25 @@ class SettingsViewModel : ViewModel(), Observable {
                             - Engagement: ${showMuscleEngagement.value}
                 """.trimIndent()
     }
+}
 
+class MediaPipeViewModel {
+    companion object {
+        const val TAG = "PoseLandmarkerHelper"
+
+        const val DELEGATE_CPU = 0
+        const val DELEGATE_GPU = 1
+        const val DEFAULT_POSE_DETECTION_CONFIDENCE = 0.5F
+        const val DEFAULT_POSE_TRACKING_CONFIDENCE = 0.5F
+        const val DEFAULT_POSE_PRESENCE_CONFIDENCE = 0.5F
+        const val DEFAULT_NUM_POSES = 1
+        const val OTHER_ERROR = 0
+        const val GPU_ERROR = 1
+
+        // Options for model should be contained at resources.getStringArray(R.array.models_spinner_titles)
+        const val MODEL_POSE_LANDMARKER_FULL = "Pose Landmarker Full"
+        const val MODEL_POSE_LANDMARKER_LITE = "Pose Landmarker Lite"
+        const val MODEL_POSE_LANDMARKER_HEAVY ="Pose Landmarker Heavy"
+
+    }
 }
