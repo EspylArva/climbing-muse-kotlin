@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.camera.core.CameraSelector
 import androidx.databinding.Bindable
-import androidx.databinding.InverseMethod
 import androidx.databinding.Observable
 import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.AndroidViewModel
@@ -12,13 +11,8 @@ import androidx.lifecycle.MutableLiveData
 import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application), Observable {
-
+class ComputerVisionViewModel(application: Application) : AndroidViewModel(application), Observable {
     /// Computer Vision settings
-    // MediaPipe model used
-    @Bindable
-    val model = MutableLiveData<String>()
-
     // Angle options
     @Bindable val showAngles = MutableLiveData<Boolean>()
 
@@ -32,22 +26,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     // Muscles options
     @Bindable val showMuscleMarkers = MutableLiveData<Boolean>()
-
     @Bindable val showMuscleEngagement = MutableLiveData<Boolean>()
-    ///
-
-    /// Camera settings
-    @Bindable val cameraSelection = MutableLiveData<Int>()
     ///
 
     init {
         val res = application.resources
         val sp =
             application.getSharedPreferences(res.getString(R.string.app_name), Context.MODE_PRIVATE)
-
-        /// Camera settings
-        cameraSelection.postValue(sp.getInt(res.getString(R.string.sp_camera_cameraSelection), CameraSelector.LENS_FACING_BACK))
-        cameraSelection.observeForever { sp.edit().putInt(res.getString(R.string.sp_camera_cameraSelection), it).apply() }
 
         /// Computer Vision settings
         showAngles.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showAngles), ComputerVisionViewModel.DEFAULT_SHOW_ANGLES))
@@ -65,13 +50,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         showJointMarkers.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showJoints), it).apply() }
         showMuscleMarkers.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showMusclesMarker), it).apply() }
         showMuscleEngagement.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showMuscleEngagement), it).apply() }
-
-        /// MediaPipe settings
-        model.postValue(sp.getString(res.getString(R.string.sp_mediapipe_model), MediaPipeViewModel.MODEL_POSE_LANDMARKER_FULL))
-        model.observeForever { sp.edit().putString(res.getString(R.string.sp_mediapipe_model), it).apply() }
     }
 
 
+    // TODO
     private var _delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
     private var _minPoseDetectionConfidence: Float =
         PoseLandmarkerHelper.DEFAULT_POSE_DETECTION_CONFIDENCE
@@ -88,6 +70,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val currentMinPosePresenceConfidence: Float
         get() = _minPosePresenceConfidence
 
+
     fun setDelegate(delegate: Int) {
         _delegate = delegate
     }
@@ -103,6 +86,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setMinPosePresenceConfidence(confidence: Float) {
         _minPosePresenceConfidence = confidence
     }
+    // END
+
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
@@ -117,47 +102,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         callbacks.notifyCallbacks(this, fieldId, null)
     }
 
-
-    override fun toString(): String {
-        return """
-                    Settings: ${this.hashCode()}
-                    - Model: ${model.value}
-                    - Decorators:
-                        - Angle: ${showAngles.value}
-                        - Center of Gravity:
-                            - Marker: ${showCOGMarker.value}
-                            - Trail: ${showCOGTrail.value}
-                            - Balance: ${showBalanceMarker.value}
-                        - Joints: ${showJointMarkers.value}
-                        - Muscles:
-                            - Marker: ${showMuscleMarkers.value}
-                            - Engagement: ${showMuscleEngagement.value}
-                """.trimIndent()
-    }
-}
-
-class CameraViewModel {
-    companion object {
-        const val AVAILABLE_CAMERAS_ARRAY_ID = R.array.camera_spinner_titles
-    }
-
-    object Converter {
-        @JvmStatic fun getCameraName(cameraCode: Int): String = when(cameraCode) {
-            CameraSelector.LENS_FACING_BACK -> "Back Camera"
-            CameraSelector.LENS_FACING_FRONT -> "Front Camera"
-            else -> "UNKNOWN"
-        }
-
-        @InverseMethod("getCameraName")
-        @JvmStatic fun getCameraCode(cameraLabel: String): Int = when(cameraLabel) {
-            "Back Camera" -> CameraSelector.LENS_FACING_BACK
-            "Front Camera" -> CameraSelector.LENS_FACING_FRONT
-            else -> CameraSelector.LENS_FACING_BACK
-        }
-    }
-}
-
-class ComputerVisionViewModel {
     companion object {
         const val DEFAULT_SHOW_ANGLES = true
         const val DEFAULT_SHOW_COG_TRAIL = true
@@ -166,26 +110,5 @@ class ComputerVisionViewModel {
         const val DEFAULT_SHOW_JOINTS_MARKER = true
         const val DEFAULT_SHOW_MUSCLES_MARKER = true
         const val DEFAULT_SHOW_MUSCLES_ENGAGEMENT = true
-    }
-}
-
-class MediaPipeViewModel {
-    companion object {
-        const val TAG = "PoseLandmarkerHelper"
-
-        const val DELEGATE_CPU = 0
-        const val DELEGATE_GPU = 1
-        const val DEFAULT_POSE_DETECTION_CONFIDENCE = 0.5F
-        const val DEFAULT_POSE_TRACKING_CONFIDENCE = 0.5F
-        const val DEFAULT_POSE_PRESENCE_CONFIDENCE = 0.5F
-        const val DEFAULT_NUM_POSES = 1
-        const val OTHER_ERROR = 0
-        const val GPU_ERROR = 1
-
-        // Options for model should be contained at resources.getStringArray(R.array.models_spinner_titles)
-        const val MODEL_POSE_LANDMARKER_FULL = "Pose Landmarker Full"
-        const val MODEL_POSE_LANDMARKER_LITE = "Pose Landmarker Lite"
-        const val MODEL_POSE_LANDMARKER_HEAVY ="Pose Landmarker Heavy"
-
     }
 }

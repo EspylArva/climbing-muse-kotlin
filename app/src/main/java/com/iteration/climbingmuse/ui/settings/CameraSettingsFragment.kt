@@ -16,7 +16,7 @@ class CameraSettingsFragment : Fragment() {
 
     private var _binding: FragmentCameraSettingsBinding? = null
 
-    private val vm: SettingsViewModel by activityViewModels()
+    private val vm: CameraViewModel by activityViewModels()
 
     private val binding get() = _binding!!
 

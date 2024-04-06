@@ -24,7 +24,7 @@ import timber.log.Timber
 class ComputerVisionSettingsFragment : Fragment() {
 
     private var _binding: FragmentComputerVisionSettingsBinding? = null
-    private val vm: SettingsViewModel by activityViewModels()
+    private val vm: ComputerVisionViewModel by activityViewModels()
     private val binding get() = _binding!!
 
     override fun onCreateView(

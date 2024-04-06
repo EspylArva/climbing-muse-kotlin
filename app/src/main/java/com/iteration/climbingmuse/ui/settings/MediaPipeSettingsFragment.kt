@@ -15,7 +15,7 @@ import timber.log.Timber
 class MediaPipeSettingsFragment : Fragment() {
     private var _binding: FragmentMediaPipeSettingsBinding? = null
 
-    private val vm: SettingsViewModel by activityViewModels()
+    private val vm: MediaPipeViewModel by activityViewModels()
 
     private val binding get() = _binding!!
 

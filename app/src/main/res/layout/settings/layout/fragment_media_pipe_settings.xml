@@ -8,7 +8,7 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.iteration.climbingmuse.ui.settings.SettingsViewModel"/>
+            type="com.iteration.climbingmuse.ui.settings.MediaPipeViewModel"/>
     </data>
 
     <LinearLayout
