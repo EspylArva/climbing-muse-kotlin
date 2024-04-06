@@ -9,8 +9,6 @@
         <variable
             name="viewmodel"
             type="com.iteration.climbingmuse.ui.settings.SettingsViewModel"/>
-        <import
-            type="com.iteration.climbingmuse.ui.settings.SettingsViewModel.MaterialCheckBoxConverter"/>
     </data>
 
     <LinearLayout

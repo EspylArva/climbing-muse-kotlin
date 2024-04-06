@@ -27,13 +27,13 @@ class MediaPipeSettingsFragment : Fragment() {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_media_pipe_settings, container, false)
         binding.lifecycleOwner = this;
         binding.viewmodel = vm
-        setupDropdown(binding.menuModel)
         return binding.root
 
     }
 
     override fun onResume() {
         super.onResume()
+        setupDropdown(binding.menuModel)
     }
 
     override fun onDestroyView() {
@@ -42,6 +42,7 @@ class MediaPipeSettingsFragment : Fragment() {
     }
 
     private fun setupDropdown(modelDropdown: MaterialAutoCompleteTextView) {
+        Timber.d("ModelDropDown should have these items selectable: ${resources.getStringArray(R.array.models_spinner_titles).toList()}. Selected item should be ${vm.model.value}")
         modelDropdown.setSimpleItems(R.array.models_spinner_titles)
     }
 }

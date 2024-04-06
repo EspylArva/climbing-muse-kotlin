@@ -6,7 +6,7 @@
     <string name="title_camera">Camera</string>
     <string name="title_file_explorer">Explore local files</string>
     <string name="title_settings">Settings</string>
-    <string name="title_camera_settings">Camera Settings</string>>
+    <string name="title_camera_settings">Camera</string>>
     <string name="title_computer_vision_settings">Computer\nVision</string>
     <string name="title_mediapipe_settings">MediaPipe</string>
 
@@ -51,6 +51,10 @@
     <!-- ================= -->
     <!-- SETTINGS FRAGMENT -->
     <!-- ================= -->
+    <!-- Camera Settings -->
+    <string name="camera_settings_warning">Camera tab settings</string>
+    <string name="camera_settings_camera">Choose the camera used</string>
+
     <!-- Computer Vision Settings -->
     <string name="cv_settings_model">Model</string>
     <string name="cv_settings_presence_threshold">Presence Threshold</string>
@@ -75,6 +79,11 @@
         <item>Pose Landmarker Full</item>
         <item>Pose Landmarker Lite</item>
         <item>Pose Landmarker Heavy</item>
+    </string-array>
+
+    <string-array name="camera_spinner_titles">
+        <item>Back Camera</item>
+        <item>Front Camera</item>
     </string-array>
     <!-- ================= -->
 

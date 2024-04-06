@@ -9,8 +9,8 @@
         <variable
             name="viewmodel"
             type="com.iteration.climbingmuse.ui.settings.SettingsViewModel"/>
-        <import
-            type="com.iteration.climbingmuse.ui.settings.SettingsViewModel.MaterialCheckBoxConverter"/>
+         <import
+            type="com.iteration.climbingmuse.ui.settings.CameraViewModel.Converter"/>
     </data>
 
     <LinearLayout
@@ -21,7 +21,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/cv_settings_warning"
+            android:text="@string/camera_settings_warning"
             android:textSize="@dimen/medium_text"
             android:padding="@dimen/default_padding"/>
 
@@ -39,87 +39,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/check_angle_decorator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="@={viewmodel.showAngles}"
-                        android:text="@string/cv_settings_angles"
-                        tools:checked="true"/>
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/check_gravity_center_decorator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/cv_settings_center_of_gravity"
-                        tools:checkedState="indeterminate"/>
-                    <LinearLayout
-                        android:id="@+id/cog_subchecks_container"
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/subcheckbox_margin"
-                        android:orientation="vertical">
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:hint="@string/camera_settings_camera">
 
-                        <CheckBox
-                            android:id="@+id/check_gravity_center_trail"
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/menu_camera"
+                            android:text="@={Converter.getCameraName(viewmodel.cameraSelection)}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:checked="@={viewmodel.showCOGTrail}"
-                            android:text="@string/cv_settings_show_trail"
-                            tools:checked="true"/>
-
-                        <CheckBox
-                            android:id="@+id/check_gravity_center_marker"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:checked="@={viewmodel.showCOGMarker}"
-                            android:text="@string/cv_settings_show_center_of_gravity"
-                            tools:checked="false"/>
-
-                        <CheckBox
-                            android:id="@+id/check_stability_marker"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:checked="@={viewmodel.showBalanceMarker}"
-                            android:text="@string/cv_settings_show_stability_marker"
-                            tools:checked="false"/>
-                    </LinearLayout>
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/check_joint_decorator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="@={viewmodel.showJointMarkers}"
-                        android:text="@string/cv_settings_joints"
-                        tools:checked="true"/>
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/check_muscle_decorator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="@string/cv_settings_muscles"
-                        tools:checkedState="checked"/>
-                    <LinearLayout
-                        android:id="@+id/muscles_subchecks_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/subcheckbox_margin"
-                        android:orientation="vertical">
-
-                        <CheckBox
-                            android:id="@+id/check_muscle_marker"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:checked="@={viewmodel.showMuscleMarkers}"
-                            android:text="@string/cv_settings_show_muscle_markers"
-                            tools:checked="true"/>
-
-                        <CheckBox
-                            android:id="@+id/check_muscle_engagement"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:checked="@={viewmodel.showMuscleEngagement}"
-                            android:text="@string/cv_settings_show_muscle_engagement"
-                            tools:checked="true"/>
-                    </LinearLayout>
+                            app:simpleItems="@array/camera_spinner_titles"
+                            android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

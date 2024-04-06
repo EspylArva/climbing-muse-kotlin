@@ -9,8 +9,6 @@
         <variable
             name="viewmodel"
             type="com.iteration.climbingmuse.ui.settings.SettingsViewModel"/>
-        <import
-            type="com.iteration.climbingmuse.ui.settings.SettingsViewModel.MaterialCheckBoxConverter"/>
     </data>
 
     <LinearLayout
@@ -120,6 +118,7 @@
                         android:text="@={viewmodel.model}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:simpleItems="@array/models_spinner_titles"
                         android:inputType="none"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
