@@ -1,5 +1,6 @@
 package com.iteration.climbingmuse.ui.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,8 +30,20 @@ class MediaPipeSettingsFragment : Fragment() {
         binding.lifecycleOwner = this
 
         binding.mediapipeResetButton.setOnClickListener { vm.resetParams() }
-        return binding.root
 
+        observe()
+        return binding.root
+    }
+
+    private fun observe() {
+        val sp = requireContext().getSharedPreferences(resources.getString(R.string.app_name), Context.MODE_PRIVATE)
+
+        /// MediaPipe settings
+        vm.model.observe(viewLifecycleOwner) { sp.edit().putString(resources.getString(R.string.sp_mediapipe_model), it).apply() }
+        vm.detectionThreshold.observe(viewLifecycleOwner) { sp.edit().putFloat(resources.getString(R.string.sp_mediapipe_detection_threshold), it).apply() }
+        vm.trackableThreshold.observe(viewLifecycleOwner) { sp.edit().putFloat(resources.getString(R.string.sp_mediapipe_trackable_threshold), it).apply() }
+        vm.presenceThreshold.observe(viewLifecycleOwner) { sp.edit().putFloat(resources.getString(R.string.sp_mediapipe_presence_threshold), it).apply() }
+        vm.delegatePU.observe(viewLifecycleOwner) { sp.edit().putInt(resources.getString(R.string.sp_mediapipe_delegate), it).apply() }
     }
 
     override fun onResume() {

@@ -34,13 +34,6 @@ class MediaPipeViewModel(application: Application) : AndroidViewModel(applicatio
         val res = application.resources
         val sp = application.getSharedPreferences(res.getString(R.string.app_name), Context.MODE_PRIVATE)
 
-        /// MediaPipe settings
-        model.observeForever { sp.edit().putString(res.getString(R.string.sp_mediapipe_model), it).apply() }
-        detectionThreshold.observeForever { sp.edit().putFloat(res.getString(R.string.sp_mediapipe_detection_threshold), it).apply() }
-        trackableThreshold.observeForever { sp.edit().putFloat(res.getString(R.string.sp_mediapipe_trackable_threshold), it).apply() }
-        presenceThreshold.observeForever { sp.edit().putFloat(res.getString(R.string.sp_mediapipe_presence_threshold), it).apply() }
-        delegatePU.observeForever { sp.edit().putInt(res.getString(R.string.sp_mediapipe_delegate), it).apply() }
-
         model.postValue(sp.getString(res.getString(R.string.sp_mediapipe_model), MODEL_POSE_LANDMARKER_FULL))
         detectionThreshold.postValue(sp.getFloat(res.getString(R.string.sp_mediapipe_detection_threshold), DEFAULT_POSE_DETECTION_CONFIDENCE))
         trackableThreshold.postValue(sp.getFloat(res.getString(R.string.sp_mediapipe_trackable_threshold), DEFAULT_POSE_TRACKING_CONFIDENCE))

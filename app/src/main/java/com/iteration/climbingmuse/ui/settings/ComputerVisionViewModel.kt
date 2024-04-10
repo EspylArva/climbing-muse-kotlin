@@ -31,18 +31,9 @@ class ComputerVisionViewModel(application: Application) : AndroidViewModel(appli
 
     init {
         val res = application.resources
-        val sp =
-            application.getSharedPreferences(res.getString(R.string.app_name), Context.MODE_PRIVATE)
+        val sp = application.getSharedPreferences(res.getString(R.string.app_name), Context.MODE_PRIVATE)
 
         /// Computer Vision settings
-        showAngles.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showAngles), it).apply() }
-        showCOGTrail.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showCogTrail), it).apply() }
-        showCOGMarker.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showCogMarker), it).apply() }
-        showBalanceMarker.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showBalanceMarker), it).apply() }
-        showJointMarkers.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showJoints), it).apply() }
-        showMuscleMarkers.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showMusclesMarker), it).apply() }
-        showMuscleEngagement.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showMuscleEngagement), it).apply() }
-
         showAngles.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showAngles), ComputerVisionViewModel.DEFAULT_SHOW_ANGLES))
         showCOGTrail.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogTrail), ComputerVisionViewModel.DEFAULT_SHOW_COG_TRAIL))
         showCOGMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogMarker), ComputerVisionViewModel.DEFAULT_SHOW_COG_MARKER))
@@ -50,6 +41,10 @@ class ComputerVisionViewModel(application: Application) : AndroidViewModel(appli
         showJointMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showJoints), ComputerVisionViewModel.DEFAULT_SHOW_JOINTS_MARKER))
         showMuscleMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMusclesMarker), ComputerVisionViewModel.DEFAULT_SHOW_MUSCLES_MARKER))
         showMuscleEngagement.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMuscleEngagement), ComputerVisionViewModel.DEFAULT_SHOW_MUSCLES_ENGAGEMENT))
+    }
+
+    fun resetParams() {
+        TODO("Not yet implemented")
     }
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }

@@ -1,5 +1,6 @@
 package com.iteration.climbingmuse.ui.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,7 +36,22 @@ class ComputerVisionSettingsFragment : Fragment() {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_computer_vision_settings, container, false)
         binding.lifecycleOwner = this;
         binding.viewmodel = vm
+
+        binding.cvResetButton.setOnClickListener { vm.resetParams() }
+        observe()
         return binding.root
+    }
+
+    private fun observe() {
+        val sp = requireContext().getSharedPreferences(resources.getString(R.string.app_name), Context.MODE_PRIVATE)
+
+        vm.showAngles.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_cv_showAngles), it).apply() }
+        vm.showCOGTrail.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_cv_showCogTrail), it).apply() }
+        vm.showCOGMarker.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_cv_showCogMarker), it).apply() }
+        vm.showBalanceMarker.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_cv_showBalanceMarker), it).apply() }
+        vm.showJointMarkers.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_cv_showJoints), it).apply() }
+        vm.showMuscleMarkers.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_cv_showMusclesMarker), it).apply() }
+        vm.showMuscleEngagement.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_cv_showMuscleEngagement), it).apply() }
     }
 
     override fun onResume() {

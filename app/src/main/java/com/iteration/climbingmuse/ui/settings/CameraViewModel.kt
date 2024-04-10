@@ -21,10 +21,11 @@ class CameraViewModel(application: Application) : AndroidViewModel(application),
         val res = application.resources
         val sp = application.getSharedPreferences(res.getString(R.string.app_name), Context.MODE_PRIVATE)
 
-        /// Camera settings
-        cameraSelection.observeForever { sp.edit().putInt(res.getString(R.string.sp_camera_cameraSelection), it).apply() }
-
         cameraSelection.postValue(sp.getInt(res.getString(R.string.sp_camera_cameraSelection), CameraSelector.LENS_FACING_BACK))
+    }
+
+    fun resetParams() {
+        TODO("Not yet implemented")
     }
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }

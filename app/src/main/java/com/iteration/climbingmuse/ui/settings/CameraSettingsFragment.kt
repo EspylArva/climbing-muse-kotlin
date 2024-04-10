@@ -1,5 +1,6 @@
 package com.iteration.climbingmuse.ui.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,8 +29,17 @@ class CameraSettingsFragment : Fragment() {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_camera_settings, container, false)
         binding.lifecycleOwner = this;
         binding.viewmodel = vm
-        return binding.root
 
+        binding.cameraResetButton.setOnClickListener { vm.resetParams() }
+        observe()
+        return binding.root
+    }
+
+    private fun observe() {
+        val sp = requireContext().getSharedPreferences(resources.getString(R.string.app_name), Context.MODE_PRIVATE)
+
+        /// Camera settings
+        vm.cameraSelection.observe(viewLifecycleOwner) { sp.edit().putInt(resources.getString(R.string.sp_camera_cameraSelection), it).apply() }
     }
 
     override fun onResume() {
