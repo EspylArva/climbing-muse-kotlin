@@ -12,7 +12,8 @@
 
     <!-- SharedPreferences IDs. Use string@"app_name" for the SharedPreferences ID -->
     <string name="camera_permission_denied">Manifest.CAMERA permission</string>
-    <string name="sp_mediapipe_model">MediaPipe_Model</string>
+    <string name="sp_mediapipe_model">MediaPipe_model</string>
+    <string name="sp_mediapipe_detection_threshold">MediaPipe_detectionThreshold</string>
     <string name="sp_cv_showAngles">CV_showAngles</string>
     <string name="sp_cv_showCogTrail">CV_showCogTrail</string>
     <string name="sp_cv_showCogMarker">CV_showCogMarker</string>
@@ -74,6 +75,8 @@
 
     <!-- MediaPipe Settings -->
     <string name="mediapipe_settings_warning">Warning: These options may have a high impact on the analysis functionality.\nOnly fine tune these options if you know what you are doing!</string>
+    <string name="sp_mediapipe_presence_threshold">MediaPipe_presenceThreshold</string>
+    <string name="sp_mediapipe_trackable_threshold">MediaPipe_trackableThreshold</string>
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>

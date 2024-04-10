@@ -23,6 +23,7 @@ import android.net.Uri
 import android.os.SystemClock
 import androidx.annotation.VisibleForTesting
 import androidx.camera.core.ImageProxy
+import androidx.lifecycle.MutableLiveData
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.core.BaseOptions
@@ -30,14 +31,15 @@ import com.google.mediapipe.tasks.core.Delegate
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
+import com.iteration.climbingmuse.ui.settings.MediaPipeViewModel
 import timber.log.Timber
 
 class PoseLandmarkerHelper(
-    var minPoseDetectionConfidence: Float = DEFAULT_POSE_DETECTION_CONFIDENCE,
-    var minPoseTrackingConfidence: Float = DEFAULT_POSE_TRACKING_CONFIDENCE,
-    var minPosePresenceConfidence: Float = DEFAULT_POSE_PRESENCE_CONFIDENCE,
-    var currentModel: String = MODEL_POSE_LANDMARKER_FULL,
-    var currentDelegate: Int = DELEGATE_CPU,
+    var detectionConfidence:MutableLiveData<Float> = MutableLiveData<Float>(MediaPipeViewModel.DEFAULT_POSE_DETECTION_CONFIDENCE),
+    var trackingConfidence: MutableLiveData<Float> = MutableLiveData<Float>(MediaPipeViewModel.DEFAULT_POSE_TRACKING_CONFIDENCE),
+    var presenceConfidence: MutableLiveData<Float> = MutableLiveData<Float>(MediaPipeViewModel.DEFAULT_POSE_PRESENCE_CONFIDENCE),
+    var model: MutableLiveData<String> = MutableLiveData<String>(MediaPipeViewModel.MODEL_POSE_LANDMARKER_FULL),
+    var currentDelegate: Int, //FIXME
     var runningMode: RunningMode = RunningMode.IMAGE,
     val context: Context,
     // this listener is only used when running in RunningMode.LIVE_STREAM
@@ -73,19 +75,19 @@ class PoseLandmarkerHelper(
 
         // Use the specified hardware for running the model. Default to CPU
         when (currentDelegate) {
-            DELEGATE_CPU -> {
+            MediaPipeViewModel.DELEGATE_CPU -> {
                 baseOptionBuilder.setDelegate(Delegate.CPU)
             }
-            DELEGATE_GPU -> {
+            MediaPipeViewModel.DELEGATE_GPU -> {
                 baseOptionBuilder.setDelegate(Delegate.GPU)
             }
         }
 
         val modelName =
-            when (currentModel) {
-                MODEL_POSE_LANDMARKER_FULL -> "pose_landmarker_full.task"
-                MODEL_POSE_LANDMARKER_LITE -> "pose_landmarker_lite.task"
-                MODEL_POSE_LANDMARKER_HEAVY -> "pose_landmarker_heavy.task"
+            when (model.value) {
+                MediaPipeViewModel.MODEL_POSE_LANDMARKER_FULL -> "pose_landmarker_full.task"
+                MediaPipeViewModel.MODEL_POSE_LANDMARKER_LITE -> "pose_landmarker_lite.task"
+                MediaPipeViewModel.MODEL_POSE_LANDMARKER_HEAVY -> "pose_landmarker_heavy.task"
                 else -> "pose_landmarker_full.task"
             }
 
@@ -112,9 +114,9 @@ class PoseLandmarkerHelper(
             val optionsBuilder =
                 PoseLandmarker.PoseLandmarkerOptions.builder()
                     .setBaseOptions(baseOptions)
-                    .setMinPoseDetectionConfidence(minPoseDetectionConfidence)
-                    .setMinTrackingConfidence(minPoseTrackingConfidence)
-                    .setMinPosePresenceConfidence(minPosePresenceConfidence)
+                    .setMinPoseDetectionConfidence(detectionConfidence.value?.div(100))
+                    .setMinTrackingConfidence(trackingConfidence.value?.div(100))
+                    .setMinPosePresenceConfidence(presenceConfidence.value?.div(100))
                     .setRunningMode(runningMode)
 
             // The ResultListener and ErrorListener only use for LIVE_STREAM mode.
@@ -143,11 +145,26 @@ class PoseLandmarkerHelper(
         }
     }
 
+    fun logSetup() {
+        Timber.v("""
+            ====================================
+            Current configuration for MediaPipe:
+            ------------------------------------            
+            Detection confidence : ${detectionConfidence.value}
+            Tracking confidence  : ${trackingConfidence.value}
+            Presence confidence  : ${presenceConfidence.value}
+            Model used           : ${model.value}
+            Current delegate     : $currentDelegate
+            ====================================
+        """.trimIndent())
+    }
+
     // Convert the ImageProxy to MP Image and feed it to PoselandmakerHelper.
     fun detectLiveStream(
         imageProxy: ImageProxy,
         isFrontCamera: Boolean
     ) {
+        logSetup()
         if (runningMode != RunningMode.LIVE_STREAM) {
             throw IllegalArgumentException(
                 "Attempting to call detectLiveStream" +
@@ -195,6 +212,7 @@ class PoseLandmarkerHelper(
     // Run pose landmark using MediaPipe Pose Landmarker API
     @VisibleForTesting
     fun detectAsync(mpImage: MPImage, frameTime: Long) {
+        logSetup()
         poseLandmarker?.detectAsync(mpImage, frameTime)
         // As we're using running mode LIVE_STREAM, the landmark result will
         // be returned in returnLivestreamResult function
@@ -208,6 +226,7 @@ class PoseLandmarkerHelper(
         videoUri: Uri,
         inferenceIntervalMs: Long
     ): ResultBundle? {
+        logSetup()
         if (runningMode != RunningMode.VIDEO) {
             throw IllegalArgumentException(
                 "Attempting to call detectVideoFile" +
@@ -295,6 +314,7 @@ class PoseLandmarkerHelper(
     // Accepted a Bitmap and runs pose landmarker inference on it to return
     // results back to the caller
     fun detectImage(image: Bitmap): ResultBundle? {
+        logSetup()
         if (runningMode != RunningMode.IMAGE) {
             throw IllegalArgumentException(
                 "Attempting to call detectImage" +
@@ -358,20 +378,10 @@ class PoseLandmarkerHelper(
     companion object {
         const val TAG = "PoseLandmarkerHelper"
 
-        const val DELEGATE_CPU = 0
-        const val DELEGATE_GPU = 1
-        const val DEFAULT_POSE_DETECTION_CONFIDENCE = 0.5F
-        const val DEFAULT_POSE_TRACKING_CONFIDENCE = 0.5F
-        const val DEFAULT_POSE_PRESENCE_CONFIDENCE = 0.5F
         const val DEFAULT_NUM_POSES = 1
+
         const val OTHER_ERROR = 0
         const val GPU_ERROR = 1
-
-        // Options for model should be contained at resources.getStringArray(R.array.models_spinner_titles)
-        const val MODEL_POSE_LANDMARKER_FULL = "Pose Landmarker Full"
-        const val MODEL_POSE_LANDMARKER_LITE = "Pose Landmarker Lite"
-        const val MODEL_POSE_LANDMARKER_HEAVY ="Pose Landmarker Heavy"
-
     }
 
     data class ResultBundle(

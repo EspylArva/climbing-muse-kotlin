@@ -38,6 +38,7 @@ import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentCameraBinding
 import com.iteration.climbingmuse.ui.settings.CameraViewModel
 import com.iteration.climbingmuse.ui.settings.ComputerVisionViewModel
+import com.iteration.climbingmuse.ui.settings.MediaPipeViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -51,6 +52,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     private val binding get() = _binding!!
     private val cameraViewModel: CameraViewModel by activityViewModels()
     private val cvViewModel: ComputerVisionViewModel by activityViewModels()
+    private val mediapipeViewModel: MediaPipeViewModel by activityViewModels()
 
     private lateinit var backgroundExecutor: ExecutorService
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
@@ -79,6 +81,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
+        mediapipeViewModel
         return binding.root
     }
 
@@ -191,10 +194,11 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 poseLandmarkerHelper = PoseLandmarkerHelper(
                     context = requireContext(),
                     runningMode = RunningMode.LIVE_STREAM,
-                    minPoseDetectionConfidence = cvViewModel.currentMinPoseDetectionConfidence,
-                    minPoseTrackingConfidence = cvViewModel.currentMinPoseTrackingConfidence,
-                    minPosePresenceConfidence = cvViewModel.currentMinPosePresenceConfidence,
-                    currentDelegate = cvViewModel.currentDelegate,
+                    detectionConfidence = mediapipeViewModel.detectionThreshold, // currentMinPoseDetectionConfidence,
+                    trackingConfidence = mediapipeViewModel.trackableThreshold, // currentMinPoseTrackingConfidence,
+                    presenceConfidence = mediapipeViewModel.presenceThreshold, // currentMinPosePresenceConfidence,
+                    model = mediapipeViewModel.model,
+                    currentDelegate = mediapipeViewModel.currentDelegate,
                     poseLandmarkerHelperListener = this
                 )
             }
@@ -212,10 +216,10 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     override fun onPause() {
         super.onPause()
         if(this::poseLandmarkerHelper.isInitialized) {
-            cvViewModel.setMinPoseDetectionConfidence(poseLandmarkerHelper.minPoseDetectionConfidence)
-            cvViewModel.setMinPoseTrackingConfidence(poseLandmarkerHelper.minPoseTrackingConfidence)
-            cvViewModel.setMinPosePresenceConfidence(poseLandmarkerHelper.minPosePresenceConfidence)
-            cvViewModel.setDelegate(poseLandmarkerHelper.currentDelegate)
+//            mediapipeViewModel.setMinPoseDetectionConfidence(poseLandmarkerHelper.minPoseDetectionConfidence)
+//            mediapipeViewModel.setMinPoseTrackingConfidence(poseLandmarkerHelper.minPoseTrackingConfidence)
+//            mediapipeViewModel.setMinPosePresenceConfidence(poseLandmarkerHelper.minPosePresenceConfidence)
+//            mediapipeViewModel.setDelegate(poseLandmarkerHelper.currentDelegate)
 
             // Close the PoseLandmarkerHelper and release resources
             backgroundExecutor.execute { poseLandmarkerHelper.clearPoseLandmarker() }

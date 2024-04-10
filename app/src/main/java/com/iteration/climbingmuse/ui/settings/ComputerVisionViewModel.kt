@@ -35,14 +35,6 @@ class ComputerVisionViewModel(application: Application) : AndroidViewModel(appli
             application.getSharedPreferences(res.getString(R.string.app_name), Context.MODE_PRIVATE)
 
         /// Computer Vision settings
-        showAngles.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showAngles), ComputerVisionViewModel.DEFAULT_SHOW_ANGLES))
-        showCOGTrail.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogTrail), ComputerVisionViewModel.DEFAULT_SHOW_COG_TRAIL))
-        showCOGMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogMarker), ComputerVisionViewModel.DEFAULT_SHOW_COG_MARKER))
-        showBalanceMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showBalanceMarker), ComputerVisionViewModel.DEFAULT_SHOW_BALANCE_MARKER))
-        showJointMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showJoints), ComputerVisionViewModel.DEFAULT_SHOW_JOINTS_MARKER))
-        showMuscleMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMusclesMarker), ComputerVisionViewModel.DEFAULT_SHOW_MUSCLES_MARKER))
-        showMuscleEngagement.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMuscleEngagement), ComputerVisionViewModel.DEFAULT_SHOW_MUSCLES_ENGAGEMENT))
-
         showAngles.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showAngles), it).apply() }
         showCOGTrail.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showCogTrail), it).apply() }
         showCOGMarker.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showCogMarker), it).apply() }
@@ -50,44 +42,15 @@ class ComputerVisionViewModel(application: Application) : AndroidViewModel(appli
         showJointMarkers.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showJoints), it).apply() }
         showMuscleMarkers.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showMusclesMarker), it).apply() }
         showMuscleEngagement.observeForever { sp.edit().putBoolean(res.getString(R.string.sp_cv_showMuscleEngagement), it).apply() }
+
+        showAngles.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showAngles), ComputerVisionViewModel.DEFAULT_SHOW_ANGLES))
+        showCOGTrail.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogTrail), ComputerVisionViewModel.DEFAULT_SHOW_COG_TRAIL))
+        showCOGMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogMarker), ComputerVisionViewModel.DEFAULT_SHOW_COG_MARKER))
+        showBalanceMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showBalanceMarker), ComputerVisionViewModel.DEFAULT_SHOW_BALANCE_MARKER))
+        showJointMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showJoints), ComputerVisionViewModel.DEFAULT_SHOW_JOINTS_MARKER))
+        showMuscleMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMusclesMarker), ComputerVisionViewModel.DEFAULT_SHOW_MUSCLES_MARKER))
+        showMuscleEngagement.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMuscleEngagement), ComputerVisionViewModel.DEFAULT_SHOW_MUSCLES_ENGAGEMENT))
     }
-
-
-    // TODO
-    private var _delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
-    private var _minPoseDetectionConfidence: Float =
-        PoseLandmarkerHelper.DEFAULT_POSE_DETECTION_CONFIDENCE
-    private var _minPoseTrackingConfidence: Float =
-        PoseLandmarkerHelper.DEFAULT_POSE_TRACKING_CONFIDENCE
-    private var _minPosePresenceConfidence: Float =
-        PoseLandmarkerHelper.DEFAULT_POSE_PRESENCE_CONFIDENCE
-
-    val currentDelegate: Int get() = _delegate
-    val currentMinPoseDetectionConfidence: Float
-        get() = _minPoseDetectionConfidence
-    val currentMinPoseTrackingConfidence: Float
-        get() = _minPoseTrackingConfidence
-    val currentMinPosePresenceConfidence: Float
-        get() = _minPosePresenceConfidence
-
-
-    fun setDelegate(delegate: Int) {
-        _delegate = delegate
-    }
-
-    fun setMinPoseDetectionConfidence(confidence: Float) {
-        _minPoseDetectionConfidence = confidence
-    }
-
-    fun setMinPoseTrackingConfidence(confidence: Float) {
-        _minPoseTrackingConfidence = confidence
-    }
-
-    fun setMinPosePresenceConfidence(confidence: Float) {
-        _minPosePresenceConfidence = confidence
-    }
-    // END
-
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
