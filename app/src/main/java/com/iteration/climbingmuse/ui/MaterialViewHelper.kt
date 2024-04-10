@@ -5,9 +5,14 @@ import android.content.res.Resources
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.RadioGroup
 import androidx.annotation.Dimension
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.res.ResourcesCompat
+import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingListener
+import androidx.databinding.InverseBindingMethod
+import androidx.databinding.InverseBindingMethods
 import androidx.databinding.InverseMethod
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.chip.Chip

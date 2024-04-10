@@ -2,18 +2,18 @@ package com.iteration.climbingmuse.ui.settings
 
 import android.app.Application
 import android.content.Context
+import android.widget.RadioGroup
 import androidx.databinding.Bindable
 import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
+import androidx.databinding.InverseBindingMethod
+import androidx.databinding.InverseBindingMethods
+import androidx.databinding.InverseMethod
 import androidx.databinding.Observable
 import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.google.android.material.slider.Slider
-import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.iteration.climbingmuse.R
-import com.iteration.climbingmuse.analysis.PoseLandmarkerHelper
 import timber.log.Timber
 
 class MediaPipeViewModel(application: Application) : AndroidViewModel(application), Observable {
@@ -22,11 +22,13 @@ class MediaPipeViewModel(application: Application) : AndroidViewModel(applicatio
     @Bindable
     val model = MutableLiveData<String>()
     @Bindable
-    val detectionThreshold = MutableLiveData<Float>(50f)
+    val detectionThreshold = MutableLiveData<Float>(DEFAULT_POSE_DETECTION_CONFIDENCE)
     @Bindable
-    val trackableThreshold = MutableLiveData<Float>(50f)
+    val trackableThreshold = MutableLiveData<Float>(DEFAULT_POSE_TRACKING_CONFIDENCE)
     @Bindable
-    val presenceThreshold = MutableLiveData<Float>(50f)
+    val presenceThreshold = MutableLiveData<Float>(DEFAULT_POSE_PRESENCE_CONFIDENCE)
+    @Bindable
+    val delegatePU = MutableLiveData<Int>(DELEGATE_CPU)
 
     init {
         val res = application.resources
@@ -37,27 +39,24 @@ class MediaPipeViewModel(application: Application) : AndroidViewModel(applicatio
         detectionThreshold.observeForever { sp.edit().putFloat(res.getString(R.string.sp_mediapipe_detection_threshold), it).apply() }
         trackableThreshold.observeForever { sp.edit().putFloat(res.getString(R.string.sp_mediapipe_trackable_threshold), it).apply() }
         presenceThreshold.observeForever { sp.edit().putFloat(res.getString(R.string.sp_mediapipe_presence_threshold), it).apply() }
+        delegatePU.observeForever { sp.edit().putInt(res.getString(R.string.sp_mediapipe_delegate), it).apply() }
 
         model.postValue(sp.getString(res.getString(R.string.sp_mediapipe_model), MODEL_POSE_LANDMARKER_FULL))
         detectionThreshold.postValue(sp.getFloat(res.getString(R.string.sp_mediapipe_detection_threshold), DEFAULT_POSE_DETECTION_CONFIDENCE))
         trackableThreshold.postValue(sp.getFloat(res.getString(R.string.sp_mediapipe_trackable_threshold), DEFAULT_POSE_TRACKING_CONFIDENCE))
         presenceThreshold.postValue(sp.getFloat(res.getString(R.string.sp_mediapipe_presence_threshold), DEFAULT_POSE_PRESENCE_CONFIDENCE))
+        delegatePU.postValue(sp.getInt(res.getString(R.string.sp_mediapipe_delegate), DELEGATE_CPU))
     }
 
-
-
-    // TODO
-    private var _delegate: Int = DELEGATE_CPU
-
-    val currentDelegate: Int get() = _delegate
-    // END
-
+    // FIXME: reset makes the dropdown bugged
     fun resetParams() {
         model.postValue(MODEL_POSE_LANDMARKER_FULL)
         detectionThreshold.postValue(DEFAULT_POSE_DETECTION_CONFIDENCE)
         trackableThreshold.postValue(DEFAULT_POSE_TRACKING_CONFIDENCE)
         presenceThreshold.postValue(DEFAULT_POSE_PRESENCE_CONFIDENCE)
+        delegatePU.postValue(DELEGATE_CPU)
     }
+
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {

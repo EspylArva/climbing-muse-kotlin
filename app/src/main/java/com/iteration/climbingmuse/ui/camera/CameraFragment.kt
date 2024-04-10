@@ -194,11 +194,11 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 poseLandmarkerHelper = PoseLandmarkerHelper(
                     context = requireContext(),
                     runningMode = RunningMode.LIVE_STREAM,
-                    detectionConfidence = mediapipeViewModel.detectionThreshold, // currentMinPoseDetectionConfidence,
-                    trackingConfidence = mediapipeViewModel.trackableThreshold, // currentMinPoseTrackingConfidence,
-                    presenceConfidence = mediapipeViewModel.presenceThreshold, // currentMinPosePresenceConfidence,
+                    detectionConfidence = mediapipeViewModel.detectionThreshold,
+                    trackingConfidence = mediapipeViewModel.trackableThreshold,
+                    presenceConfidence = mediapipeViewModel.presenceThreshold,
                     model = mediapipeViewModel.model,
-                    currentDelegate = mediapipeViewModel.currentDelegate,
+                    delegate = mediapipeViewModel.delegatePU,
                     poseLandmarkerHelperListener = this
                 )
             }
@@ -216,11 +216,6 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     override fun onPause() {
         super.onPause()
         if(this::poseLandmarkerHelper.isInitialized) {
-//            mediapipeViewModel.setMinPoseDetectionConfidence(poseLandmarkerHelper.minPoseDetectionConfidence)
-//            mediapipeViewModel.setMinPoseTrackingConfidence(poseLandmarkerHelper.minPoseTrackingConfidence)
-//            mediapipeViewModel.setMinPosePresenceConfidence(poseLandmarkerHelper.minPosePresenceConfidence)
-//            mediapipeViewModel.setDelegate(poseLandmarkerHelper.currentDelegate)
-
             // Close the PoseLandmarkerHelper and release resources
             backgroundExecutor.execute { poseLandmarkerHelper.clearPoseLandmarker() }
         }

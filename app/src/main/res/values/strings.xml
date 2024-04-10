@@ -12,8 +12,9 @@
 
     <!-- SharedPreferences IDs. Use string@"app_name" for the SharedPreferences ID -->
     <string name="camera_permission_denied">Manifest.CAMERA permission</string>
-    <string name="sp_mediapipe_model">MediaPipe_model</string>
-    <string name="sp_mediapipe_detection_threshold">MediaPipe_detectionThreshold</string>
+
+    <string name="sp_camera_cameraSelection">Camera_cameraSelection</string>
+
     <string name="sp_cv_showAngles">CV_showAngles</string>
     <string name="sp_cv_showCogTrail">CV_showCogTrail</string>
     <string name="sp_cv_showCogMarker">CV_showCogMarker</string>
@@ -21,7 +22,12 @@
     <string name="sp_cv_showJoints">CV_showJoints</string>
     <string name="sp_cv_showMusclesMarker">CV_showMusclesMarker</string>
     <string name="sp_cv_showMuscleEngagement">CV_showMuscleEngagement</string>
-    <string name="sp_camera_cameraSelection">Camera_cameraSelection</string>
+
+    <string name="sp_mediapipe_model">MediaPipe_model</string>
+    <string name="sp_mediapipe_detection_threshold">MediaPipe_detectionThreshold</string>
+    <string name="sp_mediapipe_presence_threshold">MediaPipe_presenceThreshold</string>
+    <string name="sp_mediapipe_trackable_threshold">MediaPipe_trackableThreshold</string>
+    <string name="sp_mediapipe_delegate">MediaPipe_delegate</string>
 
 
     <!-- Snackbar content -->
@@ -33,6 +39,7 @@
     <!-- Button text -->
     <string name="button_give_permission">Give permission</string>
     <string name="button_refuse_permission">Refuse to give permission</string>
+    <string name="button_reset_params">Reset parameters to default</string>
 
     <!-- =============== -->
     <!-- CAMERA FRAGMENT -->
@@ -75,8 +82,12 @@
 
     <!-- MediaPipe Settings -->
     <string name="mediapipe_settings_warning">Warning: These options may have a high impact on the analysis functionality.\nOnly fine tune these options if you know what you are doing!</string>
-    <string name="sp_mediapipe_presence_threshold">MediaPipe_presenceThreshold</string>
-    <string name="sp_mediapipe_trackable_threshold">MediaPipe_trackableThreshold</string>
+    <string name="mediapipe_settings_gpu_delegate">GPU</string>
+    <string name="mediapipe_settings_cpu_delegate">CPU</string>
+
+    <string name="hint_thresholds">Set the inference parameters</string>
+    <string name="hint_model">Choose the model used to run the inference</string>
+    <string name="hint_delegate">Choose the hardware used to run the inference</string>
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>

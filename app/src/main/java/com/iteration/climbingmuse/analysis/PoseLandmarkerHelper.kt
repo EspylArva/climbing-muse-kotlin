@@ -39,7 +39,7 @@ class PoseLandmarkerHelper(
     var trackingConfidence: MutableLiveData<Float> = MutableLiveData<Float>(MediaPipeViewModel.DEFAULT_POSE_TRACKING_CONFIDENCE),
     var presenceConfidence: MutableLiveData<Float> = MutableLiveData<Float>(MediaPipeViewModel.DEFAULT_POSE_PRESENCE_CONFIDENCE),
     var model: MutableLiveData<String> = MutableLiveData<String>(MediaPipeViewModel.MODEL_POSE_LANDMARKER_FULL),
-    var currentDelegate: Int, //FIXME
+    var delegate: MutableLiveData<Int> = MutableLiveData(MediaPipeViewModel.DELEGATE_CPU),
     var runningMode: RunningMode = RunningMode.IMAGE,
     val context: Context,
     // this listener is only used when running in RunningMode.LIVE_STREAM
@@ -74,7 +74,7 @@ class PoseLandmarkerHelper(
         val baseOptionBuilder = BaseOptions.builder()
 
         // Use the specified hardware for running the model. Default to CPU
-        when (currentDelegate) {
+        when (delegate.value) {
             MediaPipeViewModel.DELEGATE_CPU -> {
                 baseOptionBuilder.setDelegate(Delegate.CPU)
             }
@@ -154,7 +154,7 @@ class PoseLandmarkerHelper(
             Tracking confidence  : ${trackingConfidence.value}
             Presence confidence  : ${presenceConfidence.value}
             Model used           : ${model.value}
-            Current delegate     : $currentDelegate
+            Current delegate     : ${delegate.value}
             ====================================
         """.trimIndent())
     }

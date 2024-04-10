@@ -25,8 +25,10 @@ class MediaPipeSettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_media_pipe_settings, container, false)
-        binding.lifecycleOwner = this;
         binding.viewmodel = vm
+        binding.lifecycleOwner = this
+
+        binding.mediapipeResetButton.setOnClickListener { vm.resetParams() }
         return binding.root
 
     }
