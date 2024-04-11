@@ -30,7 +30,10 @@ class CameraSettingsFragment : Fragment() {
         binding.lifecycleOwner = this;
         binding.viewmodel = vm
 
-        binding.cameraResetButton.setOnClickListener { vm.resetParams() }
+        binding.cameraResetButton.setOnClickListener {
+            vm.resetParams()
+            setupDropdown(binding.menuCamera)
+        }
         observe()
         return binding.root
     }
@@ -53,8 +56,8 @@ class CameraSettingsFragment : Fragment() {
     }
 
     private fun setupDropdown(modelDropdown: MaterialAutoCompleteTextView) {
-        Timber.d("CameraDropDown should have these items selectable: ${resources.getStringArray(CameraViewModel.AVAILABLE_CAMERAS_ARRAY_ID).toList()}. Selected item should be ${CameraViewModel.Converter.getCameraName(vm.cameraSelection.value!!)}")
-        val selectableValues = resources.getStringArray(CameraViewModel.AVAILABLE_CAMERAS_ARRAY_ID)
+        Timber.d("CameraDropDown should have these items selectable: ${resources.getStringArray(R.array.camera_spinner_titles).toList()}. Selected item should be ${CameraViewModel.Converter.getCameraName(vm.cameraSelection.value!!)}")
+        val selectableValues = resources.getStringArray(R.array.camera_spinner_titles)
         modelDropdown.setSimpleItems(selectableValues)
     }
 }

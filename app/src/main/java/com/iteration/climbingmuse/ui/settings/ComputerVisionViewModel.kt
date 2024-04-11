@@ -34,17 +34,23 @@ class ComputerVisionViewModel(application: Application) : AndroidViewModel(appli
         val sp = application.getSharedPreferences(res.getString(R.string.app_name), Context.MODE_PRIVATE)
 
         /// Computer Vision settings
-        showAngles.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showAngles), ComputerVisionViewModel.DEFAULT_SHOW_ANGLES))
-        showCOGTrail.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogTrail), ComputerVisionViewModel.DEFAULT_SHOW_COG_TRAIL))
-        showCOGMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogMarker), ComputerVisionViewModel.DEFAULT_SHOW_COG_MARKER))
-        showBalanceMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showBalanceMarker), ComputerVisionViewModel.DEFAULT_SHOW_BALANCE_MARKER))
-        showJointMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showJoints), ComputerVisionViewModel.DEFAULT_SHOW_JOINTS_MARKER))
-        showMuscleMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMusclesMarker), ComputerVisionViewModel.DEFAULT_SHOW_MUSCLES_MARKER))
-        showMuscleEngagement.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMuscleEngagement), ComputerVisionViewModel.DEFAULT_SHOW_MUSCLES_ENGAGEMENT))
+        showAngles.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showAngles), DEFAULT_SHOW_ANGLES))
+        showCOGTrail.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogTrail), DEFAULT_SHOW_COG_TRAIL))
+        showCOGMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showCogMarker), DEFAULT_SHOW_COG_MARKER))
+        showBalanceMarker.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showBalanceMarker), DEFAULT_SHOW_BALANCE_MARKER))
+        showJointMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showJoints), DEFAULT_SHOW_JOINTS_MARKER))
+        showMuscleMarkers.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMusclesMarker), DEFAULT_SHOW_MUSCLES_MARKER))
+        showMuscleEngagement.postValue(sp.getBoolean(res.getString(R.string.sp_cv_showMuscleEngagement), DEFAULT_SHOW_MUSCLES_ENGAGEMENT))
     }
 
     fun resetParams() {
-        TODO("Not yet implemented")
+        showAngles.postValue(DEFAULT_SHOW_ANGLES)
+        showCOGTrail.postValue(DEFAULT_SHOW_COG_TRAIL)
+        showCOGMarker.postValue(DEFAULT_SHOW_COG_MARKER)
+        showBalanceMarker.postValue(DEFAULT_SHOW_BALANCE_MARKER)
+        showJointMarkers.postValue(DEFAULT_SHOW_JOINTS_MARKER)
+        showMuscleMarkers.postValue(DEFAULT_SHOW_MUSCLES_MARKER)
+        showMuscleEngagement.postValue(DEFAULT_SHOW_MUSCLES_ENGAGEMENT)
     }
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }

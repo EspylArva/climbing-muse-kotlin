@@ -59,6 +59,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_camera_selection"/>
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -73,6 +78,126 @@
                             app:simpleItems="@array/camera_spinner_titles"
                             android:inputType="none"/>
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/big_padding"
+                        android:layout_marginBottom="@dimen/big_padding"
+                        app:dividerThickness="1dp"
+                        app:dividerInsetStart="16dp"
+                        app:dividerInsetEnd="16dp"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_overlay"/>
+
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Toggle Computer Vision"
+                        android:checked="true"
+                        app:thumbIcon="@drawable/switch_thumb_check"
+                        android:paddingBottom="@dimen/default_padding"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_toggle_camera"/>
+                    <RadioGroup
+                        android:id="@+id/camera_radiogroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        tools:checkedButton="@id/radio_partial">
+                        <RadioButton
+                            android:id="@+id/radio_take_video"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingStart="@dimen/default_padding"
+                            android:text="Record video"
+                            tools:ignore="RtlSymmetry" />
+                        <RadioButton
+                            android:id="@+id/radio_take_photo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingStart="@dimen/default_padding"
+                            android:text="Take picture"
+                            tools:ignore="RtlSymmetry" />
+                    </RadioGroup>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_toggle_chips"/>
+                    <RadioGroup
+                        android:id="@+id/chips_radiogroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        tools:checkedButton="@id/radio_partial">
+                        <RadioButton
+                            android:id="@+id/radio_full"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingStart="@dimen/default_padding"
+                            android:text="Full"
+                            tools:ignore="RtlSymmetry" />
+                        <RadioButton
+                            android:id="@+id/radio_partial"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingStart="@dimen/default_padding"
+                            android:text="Partial"
+                            tools:ignore="RtlSymmetry" />
+                        <RadioButton
+                            android:id="@+id/radio_hidden"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingStart="@dimen/default_padding"
+                            android:text="Hidden"
+                            tools:ignore="RtlSymmetry" />
+                    </RadioGroup>
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Show list of chips"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/big_padding"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Record video"
+                            android:checked="false"
+                            app:thumbIcon="@drawable/switch_thumb_check"
+                            android:paddingBottom="@dimen/default_padding"/>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Computer Vision"
+                            android:checked="false"
+                            app:thumbIcon="@drawable/switch_thumb_check"
+                            android:paddingBottom="@dimen/default_padding"/>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Chips visibility"
+                            android:checked="false"
+                            app:thumbIcon="@drawable/switch_thumb_check"
+                            android:paddingBottom="@dimen/default_padding"/>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

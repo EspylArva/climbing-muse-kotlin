@@ -68,7 +68,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="@string/cv_settings_detection_threshold"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:labelFor="@id/slider_detection_threshold"/>
                     <com.google.android.material.slider.Slider
                         android:id="@+id/slider_detection_threshold"
                         android:layout_width="0dp"
@@ -79,8 +80,7 @@
                         android:stepSize="1"
                         app:tickVisible="false"
                         tools:value="50"
-                        android:layout_marginStart="8dp"
-                        android:textAlignment="center"
+                        app:labelBehavior="visible"
                         android:layout_weight="5"/>
                 </LinearLayout>
 
@@ -94,7 +94,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="@string/cv_settings_tracking_threshold"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1"
+                        android:labelFor="@id/slider_tracking_threshold"/>
                     <com.google.android.material.slider.Slider
                         android:id="@+id/slider_tracking_threshold"
                         android:layout_width="0dp"
@@ -105,8 +106,7 @@
                         android:stepSize="1"
                         app:tickVisible="false"
                         tools:value="50"
-                        android:layout_marginStart="8dp"
-                        android:textAlignment="center"
+                        app:labelBehavior="visible"
                         android:layout_weight="5"/>
                 </LinearLayout>
 
@@ -120,7 +120,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="@string/cv_settings_presence_threshold"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1"
+                        android:labelFor="@id/slider_presence_threshold"/>
                     <com.google.android.material.slider.Slider
                         android:id="@+id/slider_presence_threshold"
                         android:layout_width="0dp"
@@ -131,8 +132,7 @@
                         android:stepSize="1"
                         app:tickVisible="false"
                         tools:value="50"
-                        android:layout_marginStart="8dp"
-                        android:textAlignment="center"
+                        app:labelBehavior="visible"
                         android:layout_weight="5"/>
                 </LinearLayout>
 

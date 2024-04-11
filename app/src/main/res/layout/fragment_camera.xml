@@ -55,7 +55,7 @@
             app:chipBackgroundColor="@color/md_theme_light_secondary"
             app:chipIcon="@drawable/baseline_timer_24"
             app:chipIconTint="@color/md_theme_light_onSecondary"
-            android:text="@string/chip_inference"/>
+            android:text="@string/inference_placeholder"/>
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_recording"
             android:layout_width="wrap_content"
@@ -63,7 +63,8 @@
             android:textColor="@color/md_theme_light_onSecondary"
             app:chipBackgroundColor="@color/md_theme_light_secondary"
             app:chipIcon="@drawable/baseline_fiber_manual_record_24"
-            android:text="@string/chip_recording"/>
+            android:text="@string/chip_recording"
+            android:visibility="gone"/>
     </com.iteration.climbingmuse.ui.FlowLayout>
 
     <com.iteration.climbingmuse.ui.FabMenu

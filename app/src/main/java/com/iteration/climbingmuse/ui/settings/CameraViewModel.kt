@@ -10,6 +10,7 @@ import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.iteration.climbingmuse.R
+import timber.log.Timber
 
 class CameraViewModel(application: Application) : AndroidViewModel(application), Observable {
 
@@ -25,7 +26,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application),
     }
 
     fun resetParams() {
-        TODO("Not yet implemented")
+        cameraSelection.postValue(CameraSelector.LENS_FACING_BACK)
     }
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }
@@ -41,22 +42,26 @@ class CameraViewModel(application: Application) : AndroidViewModel(application),
         callbacks.notifyCallbacks(this, fieldId, null)
     }
 
-    companion object {
-        const val AVAILABLE_CAMERAS_ARRAY_ID = R.array.camera_spinner_titles
-    }
-
     object Converter {
-        @JvmStatic fun getCameraName(cameraCode: Int): String = when(cameraCode) {
-            CameraSelector.LENS_FACING_BACK -> "Back Camera"
-            CameraSelector.LENS_FACING_FRONT -> "Front Camera"
-            else -> "UNKNOWN"
+        @JvmStatic fun getCameraName(cameraCode: Int): String {
+            val label = when(cameraCode) {
+                CameraSelector.LENS_FACING_BACK -> "Back Camera"
+                CameraSelector.LENS_FACING_FRONT -> "Front Camera"
+                else -> "UNKNOWN"
+            }
+            Timber.d("Camera code: $cameraCode ==> $label")
+            return label
         }
 
         @InverseMethod("getCameraName")
-        @JvmStatic fun getCameraCode(cameraLabel: String): Int = when(cameraLabel) {
-            "Back Camera" -> CameraSelector.LENS_FACING_BACK
-            "Front Camera" -> CameraSelector.LENS_FACING_FRONT
-            else -> CameraSelector.LENS_FACING_BACK
+        @JvmStatic fun getCameraCode(cameraLabel: String): Int {
+            val cameraCode = when(cameraLabel) {
+                "Back Camera" -> CameraSelector.LENS_FACING_BACK
+                "Front Camera" -> CameraSelector.LENS_FACING_FRONT
+                else -> CameraSelector.LENS_FACING_BACK
+            }
+            Timber.d("Camera code: $cameraLabel ==> $cameraCode")
+            return cameraCode
         }
     }
 }

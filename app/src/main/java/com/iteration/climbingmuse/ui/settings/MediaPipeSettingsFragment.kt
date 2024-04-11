@@ -29,7 +29,10 @@ class MediaPipeSettingsFragment : Fragment() {
         binding.viewmodel = vm
         binding.lifecycleOwner = this
 
-        binding.mediapipeResetButton.setOnClickListener { vm.resetParams() }
+        binding.mediapipeResetButton.setOnClickListener {
+            vm.resetParams()
+            setupDropdown(binding.menuModel)
+        }
 
         observe()
         return binding.root
