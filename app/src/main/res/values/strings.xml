@@ -14,6 +14,13 @@
     <string name="camera_permission_denied">Manifest.CAMERA permission</string>
 
     <string name="sp_camera_cameraSelection">Camera_cameraSelection</string>
+    <string name="sp_camera_cvActivated">Camera_cvActivated</string>
+    <string name="sp_camera_cameraAction">Camera_cameraAction</string>
+    <string name="sp_camera_chipVisibility">Camera_chipVisibility</string>
+
+    <string name="sp_camera_recordChipVisibility">Camera_recordChipVisibility</string>
+    <string name="sp_camera_cvChipVisibility">Camera_cvChipVisibility</string>
+    <string name="sp_camera_showChipsChipVisibility">Camera_showChipsChipVisibility</string>
 
     <string name="sp_cv_showAngles">CV_showAngles</string>
     <string name="sp_cv_showCogTrail">CV_showCogTrail</string>
@@ -95,6 +102,7 @@
     <string name="hint_overlay">Select the components to display on the overlay</string>
     <string name="hint_toggle_camera">Define the action when pressing the Camera button</string>
     <string name="hint_toggle_chips">Define which chips are visible, and how visible they are</string>
+
 
     <string-array name="models_spinner_titles">
         <item>Pose Landmarker Full</item>

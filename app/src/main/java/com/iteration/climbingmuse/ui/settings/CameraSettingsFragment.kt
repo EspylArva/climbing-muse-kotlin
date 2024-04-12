@@ -1,6 +1,7 @@
 package com.iteration.climbingmuse.ui.settings
 
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,9 @@ class CameraSettingsFragment : Fragment() {
             vm.resetParams()
             setupDropdown(binding.menuCamera)
         }
+        binding.showListOfChipsBtn.setOnClickListener {
+            binding.chipsContainer.visibility = if(binding.chipsContainer.visibility == View.GONE) View.VISIBLE else View.GONE
+        }
         observe()
         return binding.root
     }
@@ -43,6 +47,13 @@ class CameraSettingsFragment : Fragment() {
 
         /// Camera settings
         vm.cameraSelection.observe(viewLifecycleOwner) { sp.edit().putInt(resources.getString(R.string.sp_camera_cameraSelection), it).apply() }
+        vm.computerVisionActivated.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_camera_cvActivated), it).apply() }
+        vm.cameraAction.observe(viewLifecycleOwner) { sp.edit().putString(resources.getString(R.string.sp_camera_cvActivated), it.toString()).apply() }
+        vm.chipVisibility.observe(viewLifecycleOwner) { sp.edit().putString(resources.getString(R.string.sp_camera_cvActivated), it.toString()).apply() }
+
+        vm.recordChip.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_camera_recordChipVisibility), it).apply() }
+        vm.cvChip.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_camera_cvChipVisibility), it).apply() }
+        vm.chipVisibilityChip.observe(viewLifecycleOwner) { sp.edit().putBoolean(resources.getString(R.string.sp_camera_showChipsChipVisibility), it).apply() }
     }
 
     override fun onResume() {

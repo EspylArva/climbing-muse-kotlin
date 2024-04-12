@@ -11,6 +11,7 @@
             type="com.iteration.climbingmuse.ui.settings.CameraViewModel"/>
          <import
             type="com.iteration.climbingmuse.ui.settings.CameraViewModel.Converter"/>
+        <import type="com.iteration.climbingmuse.ui.settings.BindingUtils"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -98,7 +99,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Toggle Computer Vision"
-                        android:checked="true"
+                        android:checked="@={viewmodel.computerVisionActivated}"
+                        tools:checked="true"
                         app:thumbIcon="@drawable/switch_thumb_check"
                         android:paddingBottom="@dimen/default_padding"/>
 
@@ -111,8 +113,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        tools:checkedButton="@id/radio_partial">
-                        <RadioButton
+                        tools:checkedButton="@id/radio_partial"
+                        android:checkedButton="@={BindingUtils.cameraActionToButtonId(viewmodel.cameraAction)}">
+                    <RadioButton
                             android:id="@+id/radio_take_video"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -139,8 +142,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        tools:checkedButton="@id/radio_partial">
-                        <RadioButton
+                        tools:checkedButton="@id/radio_partial"
+                        android:checkedButton="@={BindingUtils.chipVisibilityToButtonId(viewmodel.chipVisibility)}">
+                    <RadioButton
                             android:id="@+id/radio_full"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -166,35 +170,42 @@
                             tools:ignore="RtlSymmetry" />
                     </RadioGroup>
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/show_list_of_chips_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Show list of chips"/>
 
                     <LinearLayout
+                        android:id="@id/chips_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:layout_marginStart="@dimen/big_padding"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        tools:visibility="visible">
 
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Record video"
-                            android:checked="false"
+                            android:checked="@={viewmodel.recordChip}"
+                            tools:checked="true"
                             app:thumbIcon="@drawable/switch_thumb_check"
                             android:paddingBottom="@dimen/default_padding"/>
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Computer Vision"
-                            android:checked="false"
+                            android:checked="@={viewmodel.cvChip}"
+                            tools:checked="true"
                             app:thumbIcon="@drawable/switch_thumb_check"
                             android:paddingBottom="@dimen/default_padding"/>
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Chips visibility"
-                            android:checked="false"
+                            android:checked="@={viewmodel.chipVisibilityChip}"
+                            tools:checked="true"
                             app:thumbIcon="@drawable/switch_thumb_check"
                             android:paddingBottom="@dimen/default_padding"/>
                     </LinearLayout>
