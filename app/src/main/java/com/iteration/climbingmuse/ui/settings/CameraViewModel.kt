@@ -43,6 +43,13 @@ class CameraViewModel(application: Application) : AndroidViewModel(application),
 
     fun resetParams() {
         cameraSelection.postValue(CameraSelector.LENS_FACING_BACK)
+        computerVisionActivated.postValue(DEFAULT_CV_ACTIVATED)
+        cameraAction.postValue(DEFAULT_CAMERA_ACTION)
+        chipVisibility.postValue(DEFAULT_CHIP_VISIBILITY)
+
+        recordChip.postValue(DEFAULT_RECORD_CHIP_VISIBILITY)
+        cvChip.postValue(DEFAULT_CV_CHIP_VISIBILITY)
+        chipVisibilityChip.postValue(DEFAULT_CHIPS_CHIP_VISIBILITY)
     }
 
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }

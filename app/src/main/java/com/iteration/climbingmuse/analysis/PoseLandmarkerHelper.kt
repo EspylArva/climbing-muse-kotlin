@@ -149,12 +149,12 @@ class PoseLandmarkerHelper(
         Timber.v("""
             ====================================
             Current configuration for MediaPipe:
-            ------------------------------------            
-            Detection confidence : ${detectionConfidence.value}
-            Tracking confidence  : ${trackingConfidence.value}
-            Presence confidence  : ${presenceConfidence.value}
-            Model used           : ${model.value}
-            Current delegate     : ${delegate.value}
+            ------------------------------------
+            Detection confidence : ${detectionConfidence.value}%
+            Tracking confidence  : ${trackingConfidence.value}%
+            Presence confidence  : ${presenceConfidence.value}%
+            Model used           : ${model.value} (Full | Heavy | Lite)
+            Current delegate     : ${delegate.value} (0: CPU | 1: GPU)
             ====================================
         """.trimIndent())
     }
