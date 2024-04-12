@@ -16,15 +16,15 @@ import timber.log.Timber
 class CameraViewModel(application: Application) : AndroidViewModel(application), Observable {
 
     /// Camera settings
-    @Bindable val cameraSelection = MutableLiveData<Int>().apply { value = CameraSelector.LENS_FACING_BACK }
-    @Bindable val computerVisionActivated = MutableLiveData<Boolean>().apply { value = DEFAULT_CV_ACTIVATED }
-    @Bindable val cameraAction = MutableLiveData<CameraAction>().apply { value = DEFAULT_CAMERA_ACTION }
-    @Bindable val chipVisibility = MutableLiveData<ChipVisibility>().apply { value = DEFAULT_CHIP_VISIBILITY }
+    @Bindable val cameraSelection = MutableLiveData<Int>(CameraSelector.LENS_FACING_BACK)
+    @Bindable val computerVisionActivated = MutableLiveData<Boolean>(DEFAULT_CV_ACTIVATED)
+    @Bindable val cameraAction = MutableLiveData<CameraAction>(DEFAULT_CAMERA_ACTION)
+    @Bindable val chipVisibility = MutableLiveData<ChipVisibility>(DEFAULT_CHIP_VISIBILITY)
 
     // Displayed Chips
-    @Bindable val recordChip = MutableLiveData<Boolean>().apply { value = DEFAULT_RECORD_CHIP_VISIBILITY }
-    @Bindable val cvChip = MutableLiveData<Boolean>().apply { value = DEFAULT_CV_CHIP_VISIBILITY }
-    @Bindable val chipVisibilityChip = MutableLiveData<Boolean>().apply { value = DEFAULT_CHIPS_CHIP_VISIBILITY }
+    @Bindable val recordChip = MutableLiveData<Boolean>(DEFAULT_RECORD_CHIP_VISIBILITY)
+    @Bindable val cvChip = MutableLiveData<Boolean>(DEFAULT_CV_CHIP_VISIBILITY)
+    @Bindable val chipVisibilityChip = MutableLiveData<Boolean>(DEFAULT_CHIPS_CHIP_VISIBILITY)
     ///
 
     init {
@@ -72,7 +72,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application),
                 CameraSelector.LENS_FACING_FRONT -> "Front Camera"
                 else -> "UNKNOWN"
             }
-            Timber.d("Camera code: $cameraCode ==> $label")
+            Timber.d("Camera code: $cameraCode ==> $label (0: Front | 1: Back)")
             return label
         }
 
@@ -83,7 +83,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application),
                 "Front Camera" -> CameraSelector.LENS_FACING_FRONT
                 else -> CameraSelector.LENS_FACING_BACK
             }
-            Timber.d("Camera code: $cameraLabel ==> $cameraCode")
+            Timber.d("Camera code: $cameraLabel ==> $cameraCode (0: Front | 1: Back)")
             return cameraCode
         }
     }

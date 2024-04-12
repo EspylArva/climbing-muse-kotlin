@@ -32,7 +32,10 @@ class CameraSettingsFragment : Fragment() {
         binding.viewmodel = vm
 
         binding.cameraResetButton.setOnClickListener {
+            Timber.d("== onClick ==")
+            Timber.d("   . Reset")
             vm.resetParams()
+            Timber.d("   . Dropdown setup")
             setupDropdown(binding.menuCamera)
         }
         binding.showListOfChipsBtn.setOnClickListener {
