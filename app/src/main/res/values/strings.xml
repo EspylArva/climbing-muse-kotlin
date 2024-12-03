@@ -117,4 +117,6 @@
     <!-- ================= -->
 
     <!-- Unclassified -->
+    <string name="select_file">Select video from storage</string>
+    <string name="sp_use_online">Use online resource</string>
 </resources>
