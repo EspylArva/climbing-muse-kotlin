@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.google.android.material.snackbar.Snackbar
@@ -35,7 +36,9 @@ import com.iteration.climbingmuse.R
 import com.iteration.climbingmuse.analysis.*
 import com.iteration.climbingmuse.app.PermissionsFragment
 import com.iteration.climbingmuse.databinding.FragmentCameraBinding
-import com.iteration.climbingmuse.ui.settings.SettingsViewModel
+import com.iteration.climbingmuse.ui.settings.CameraViewModel
+import com.iteration.climbingmuse.ui.settings.ComputerVisionViewModel
+import com.iteration.climbingmuse.ui.settings.MediaPipeViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -47,7 +50,9 @@ import java.util.concurrent.TimeUnit
 class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: SettingsViewModel by activityViewModels()
+    private val cameraViewModel: CameraViewModel by activityViewModels()
+    private val cvViewModel: ComputerVisionViewModel by activityViewModels()
+    private val mediapipeViewModel: MediaPipeViewModel by activityViewModels()
 
     private lateinit var backgroundExecutor: ExecutorService
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
@@ -76,6 +81,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
+        mediapipeViewModel
         return binding.root
     }
 
@@ -102,10 +108,10 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         }
 
         videoProcessor.decorators = arrayListOf(
-            AngleDecorator(viewModel.showAngles),
-            GravityCenterDecorator(viewModel.showCOGMarker, viewModel.showCOGTrail, viewModel.showBalanceMarker),
-            JointDecorator(viewModel.showJointMarkers),
-            MuscleEngagementDecorator(viewModel.showMuscleMarkers, viewModel.showMuscleEngagement)
+            AngleDecorator(cvViewModel.showAngles),
+            GravityCenterDecorator(cvViewModel.showCOGMarker, cvViewModel.showCOGTrail, cvViewModel.showBalanceMarker),
+            JointDecorator(cvViewModel.showJointMarkers),
+            MuscleEngagementDecorator(cvViewModel.showMuscleMarkers, cvViewModel.showMuscleEngagement)
         )
 
 
@@ -188,10 +194,11 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 poseLandmarkerHelper = PoseLandmarkerHelper(
                     context = requireContext(),
                     runningMode = RunningMode.LIVE_STREAM,
-                    minPoseDetectionConfidence = viewModel.currentMinPoseDetectionConfidence,
-                    minPoseTrackingConfidence = viewModel.currentMinPoseTrackingConfidence,
-                    minPosePresenceConfidence = viewModel.currentMinPosePresenceConfidence,
-                    currentDelegate = viewModel.currentDelegate,
+                    detectionConfidence = mediapipeViewModel.detectionThreshold,
+                    trackingConfidence = mediapipeViewModel.trackableThreshold,
+                    presenceConfidence = mediapipeViewModel.presenceThreshold,
+                    model = mediapipeViewModel.model,
+                    delegate = mediapipeViewModel.delegatePU,
                     poseLandmarkerHelperListener = this
                 )
             }
@@ -209,11 +216,6 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     override fun onPause() {
         super.onPause()
         if(this::poseLandmarkerHelper.isInitialized) {
-            viewModel.setMinPoseDetectionConfidence(poseLandmarkerHelper.minPoseDetectionConfidence)
-            viewModel.setMinPoseTrackingConfidence(poseLandmarkerHelper.minPoseTrackingConfidence)
-            viewModel.setMinPosePresenceConfidence(poseLandmarkerHelper.minPosePresenceConfidence)
-            viewModel.setDelegate(poseLandmarkerHelper.currentDelegate)
-
             // Close the PoseLandmarkerHelper and release resources
             backgroundExecutor.execute { poseLandmarkerHelper.clearPoseLandmarker() }
         }
@@ -235,7 +237,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         cameraProviderFuture.addListener({
                 // CameraProvider
                 val cameraProvider = cameraProviderFuture.get()
-                val cameraSelector = CameraSelector.Builder().requireLensFacing(viewModel.cameraSelection.value!!).build()
+                val cameraSelector = CameraSelector.Builder().requireLensFacing(cameraViewModel.cameraSelection.value!!).build()
 
                 // Build and bind the camera use cases
                 bindCameraUseCases(cameraProvider, cameraSelector)
@@ -293,7 +295,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         if(this::poseLandmarkerHelper.isInitialized) {
             poseLandmarkerHelper.detectLiveStream(
                 imageProxy = imageProxy,
-                isFrontCamera = viewModel.cameraSelection.value == CameraSelector.LENS_FACING_FRONT
+                isFrontCamera = cameraViewModel.cameraSelection.value == CameraSelector.LENS_FACING_FRONT
             )
         }
     }
@@ -378,7 +380,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         // display on overlay
         activity?.runOnUiThread {
             if (_binding != null) {
-                Timber.d(viewModel.toString())
+                Timber.d(cvViewModel.toString())
 
                 videoProcessor.processData(resultBundle.results.first())
 

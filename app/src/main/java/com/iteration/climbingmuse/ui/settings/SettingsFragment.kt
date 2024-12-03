@@ -35,8 +35,6 @@ class SettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val vm = ViewModelProvider(this).get(SettingsViewModel::class.java)
-
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -66,7 +64,7 @@ class SettingsFragment : Fragment() {
     private fun setupNavigationRailText(navRail: NavigationRailView) {
         navRail.findViewById<NavigationBarItemView>(R.id.navigation_computer_vision_settings).apply {
             setItemMaxLines(
-                this.findViewById<BaselineLayout>(com.google.android.material.R.id.navigation_bar_item_labels_group),
+                this.findViewById(com.google.android.material.R.id.navigation_bar_item_labels_group),
                 2
             )
         }

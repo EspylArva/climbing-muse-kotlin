@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_sub_navigation.xml"
-    app:startDestination="@+id/navigation_computer_vision_settings">
+    app:startDestination="@+id/navigation_camera_settings">
+
+    <fragment
+        android:id="@+id/navigation_camera_settings"
+        android:name="com.iteration.climbingmuse.ui.settings.CameraSettingsFragment"
+        android:label="@string/title_camera_settings"
+        tools:layout="@layout/fragment_camera_settings" />
 
     <fragment
         android:id="@+id/navigation_computer_vision_settings"
@@ -11,4 +17,9 @@
         android:label="@string/title_computer_vision_settings"
         tools:layout="@layout/fragment_computer_vision_settings" />
 
+    <fragment
+        android:id="@+id/navigation_mediapipe_settings"
+        android:name="com.iteration.climbingmuse.ui.settings.MediaPipeSettingsFragment"
+        android:label="@string/title_mediapipe_settings"
+        tools:layout="@layout/fragment_media_pipe_settings" />
 </navigation>

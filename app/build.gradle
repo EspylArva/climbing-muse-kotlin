@@ -34,6 +34,21 @@ android {
         viewBinding true
         dataBinding true
     }
+
+    sourceSets {
+        main {
+            res.srcDirs = [
+                'src/main/res/layout/components',
+                'src/main/res/layout/settings',
+                'src/main/res/layout',
+                'src/main/res'
+            ]
+            assets.srcDirs = [
+                'src/main/assets/mediapipe',
+                'src/main/assets'
+            ]
+        }
+    }
 }
 
 dependencies {

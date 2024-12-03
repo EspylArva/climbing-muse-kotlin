@@ -5,12 +5,19 @@ import android.content.res.Resources
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.RadioGroup
 import androidx.annotation.Dimension
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.res.ResourcesCompat
+import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingListener
+import androidx.databinding.InverseBindingMethod
+import androidx.databinding.InverseBindingMethods
+import androidx.databinding.InverseMethod
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.chip.Chip
 import com.iteration.climbingmuse.R
+import timber.log.Timber
 
 
 class MaterialViewHelper {
@@ -110,8 +117,42 @@ class MaterialViewHelper {
         }
     }
 
+    class MaterialCheckBoxConverter {
+        companion object {
+            enum class State {
+                indeterminate,
+                checked,
+                unchecked
+            }
 
+            @InverseMethod("stringToState")
+            @JvmStatic
+            fun stateToString(state: Int): State {
+                return when (state) {
+                    MaterialCheckBox.STATE_CHECKED -> State.checked
+                    MaterialCheckBox.STATE_INDETERMINATE -> State.indeterminate
+                    MaterialCheckBox.STATE_UNCHECKED -> State.unchecked
+                    else -> {
+                        Timber.e("State [%s] should not exist", state)
+                        return State.indeterminate
+                    }
+                }
+            }
 
+            @JvmStatic
+            fun stringToState(state: String): Int {
+                return when (state) {
+                    "checked" -> MaterialCheckBox.STATE_CHECKED
+                    "indeterminate" -> MaterialCheckBox.STATE_INDETERMINATE
+                    "unchecked" -> MaterialCheckBox.STATE_UNCHECKED
+                    else -> {
+                        Timber.e("State [%s] should not exist", state)
+                        return MaterialCheckBox.STATE_INDETERMINATE
+                    }
+                }
 
+            }
 
+        }
+    }
 }

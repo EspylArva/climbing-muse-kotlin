@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.settings.MediaPipeSettingsFragment">
+
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.iteration.climbingmuse.ui.settings.MediaPipeViewModel"/>
+        <import type="com.iteration.climbingmuse.ui.settings.BindingUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/header_mediapipe_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mediapipe_settings_warning"
+            android:textSize="@dimen/medium_text"
+            android:layout_margin="@dimen/default_padding"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/first_div"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_padding"
+            android:layout_marginBottom="@dimen/default_padding"
+            app:dividerThickness="1dp"
+            app:dividerInsetStart="16dp"
+            app:dividerInsetEnd="16dp"
+            app:layout_constraintTop_toBottomOf="@id/header_mediapipe_settings"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ScrollView
+            android:id="@+id/mediapipe_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="@dimen/default_padding"
+            app:layout_constraintTop_toBottomOf="@id/first_div"
+            app:layout_constraintBottom_toTopOf="@id/second_div"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hint_thresholds"/>
+                <LinearLayout
+                    android:id="@+id/container_detection_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cv_settings_detection_threshold"
+                        android:layout_weight="1"
+                        android:labelFor="@id/slider_detection_threshold"/>
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/slider_detection_threshold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:valueFrom="1"
+                        android:valueTo="99"
+                        android:value="@={viewmodel.detectionThreshold}"
+                        android:stepSize="1"
+                        app:tickVisible="false"
+                        tools:value="50"
+                        app:labelBehavior="visible"
+                        android:layout_weight="5"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_tracking_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cv_settings_tracking_threshold"
+                        android:layout_weight="1"
+                        android:labelFor="@id/slider_tracking_threshold"/>
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/slider_tracking_threshold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:valueFrom="1"
+                        android:valueTo="99"
+                        android:value="@={viewmodel.trackableThreshold}"
+                        android:stepSize="1"
+                        app:tickVisible="false"
+                        tools:value="50"
+                        app:labelBehavior="visible"
+                        android:layout_weight="5"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_presence_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cv_settings_presence_threshold"
+                        android:layout_weight="1"
+                        android:labelFor="@id/slider_presence_threshold"/>
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/slider_presence_threshold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:valueFrom="1"
+                        android:valueTo="99"
+                        android:value="@={viewmodel.presenceThreshold}"
+                        android:stepSize="1"
+                        app:tickVisible="false"
+                        tools:value="50"
+                        app:labelBehavior="visible"
+                        android:layout_weight="5"/>
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/big_padding"
+                    android:layout_marginBottom="@dimen/big_padding"
+                    app:dividerThickness="1dp"
+                    app:dividerInsetStart="16dp"
+                    app:dividerInsetEnd="16dp"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hint_model"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:hint="@string/cv_settings_model">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/menu_model"
+                        android:text="@={viewmodel.model}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:simpleItems="@array/models_spinner_titles"
+                        android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/big_padding"
+                    android:layout_marginBottom="@dimen/big_padding"
+                    app:dividerThickness="1dp"
+                    app:dividerInsetStart="16dp"
+                    app:dividerInsetEnd="16dp"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hint_delegate"/>
+                <RadioGroup
+                    android:id="@+id/processing_unit_radiogroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:checkedButton="@={BindingUtils.delegateToButtonId(viewmodel.delegatePU)}">
+                    <RadioButton
+                        android:button="@drawable/radio_cpu"
+                        android:id="@+id/radio_cpu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="@dimen/default_padding"
+                        android:text="@string/mediapipe_settings_cpu_delegate"
+                        tools:checked="true"
+                        tools:ignore="RtlSymmetry" />
+                    <RadioButton
+                        android:button="@drawable/radio_gpu"
+                        android:id="@+id/radio_gpu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingStart="@dimen/default_padding"
+                        android:text="@string/mediapipe_settings_gpu_delegate"
+                        tools:ignore="RtlSymmetry" />
+                </RadioGroup>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/second_div"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_padding"
+            android:layout_marginBottom="@dimen/default_padding"
+            app:dividerThickness="1dp"
+            app:dividerInsetStart="16dp"
+            app:dividerInsetEnd="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/mediapipe_reset_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mediapipe_reset_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding"
+            android:text="@string/button_reset_params"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
