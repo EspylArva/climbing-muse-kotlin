@@ -107,28 +107,27 @@ class PoseLandmarkerHelper(
             }
         }
 
+        val baseOptions = baseOptionBuilder.build()
+        // Create an option builder with base options and specific
+        // options only use for Pose Landmarker.
+        val optionsBuilder =
+            PoseLandmarker.PoseLandmarkerOptions.builder()
+                .setBaseOptions(baseOptions)
+                .setMinPoseDetectionConfidence(detectionConfidence.value?.div(100))
+                .setMinTrackingConfidence(trackingConfidence.value?.div(100))
+                .setMinPosePresenceConfidence(presenceConfidence.value?.div(100))
+                .setRunningMode(runningMode)
+
+        // The ResultListener and ErrorListener only use for LIVE_STREAM mode.
+        if (runningMode == RunningMode.LIVE_STREAM) {
+            optionsBuilder
+                .setResultListener(this::returnLivestreamResult)
+                .setErrorListener(this::returnLivestreamError)
+        }
+
         try {
-            val baseOptions = baseOptionBuilder.build()
-            // Create an option builder with base options and specific
-            // options only use for Pose Landmarker.
-            val optionsBuilder =
-                PoseLandmarker.PoseLandmarkerOptions.builder()
-                    .setBaseOptions(baseOptions)
-                    .setMinPoseDetectionConfidence(detectionConfidence.value?.div(100))
-                    .setMinTrackingConfidence(trackingConfidence.value?.div(100))
-                    .setMinPosePresenceConfidence(presenceConfidence.value?.div(100))
-                    .setRunningMode(runningMode)
-
-            // The ResultListener and ErrorListener only use for LIVE_STREAM mode.
-            if (runningMode == RunningMode.LIVE_STREAM) {
-                optionsBuilder
-                    .setResultListener(this::returnLivestreamResult)
-                    .setErrorListener(this::returnLivestreamError)
-            }
-
             val options = optionsBuilder.build()
-            poseLandmarker =
-                PoseLandmarker.createFromOptions(context, options)
+            poseLandmarker = PoseLandmarker.createFromOptions(context, options)
         } catch (e: IllegalStateException) {
             poseLandmarkerHelperListener?.onError(
                 "Pose Landmarker failed to initialize. See error logs for " +

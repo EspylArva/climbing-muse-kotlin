@@ -100,10 +100,10 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
 
         setFabButtonsListeners()
 
-        val scaleGestureDetector = ScaleGestureDetector(context, zoomListener)
+        val scaleGestureDetector = context?.let { ScaleGestureDetector(it, zoomListener) }
         binding.liveFeed.setOnTouchListener { v, event ->
             v.performClick()
-            scaleGestureDetector.onTouchEvent(event)
+            scaleGestureDetector?.onTouchEvent(event)
             return@setOnTouchListener true
         }
 
